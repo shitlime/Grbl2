@@ -1,0 +1,55 @@
+--- !BotData
+# 覌白
+# 作者：Shitlime
+
+# 基本信息
+info:
+  name: "覌白"
+  author: "Shitlime"
+  author_info: "是一只废物史莱姆"
+  other: "备注暂无"
+
+# Ariadne连接配置
+ariadne_config:
+  qq_id: 1145141919810
+  verify_key: "this_is_a_verify_key"
+  http_client_config: "http://localhost:114"
+  ws_client_config: "http://localhost:514"
+
+# 管理以及命令
+admin: 1919810
+cmd_prefix: ["|", "\\", "/"]
+search_prefix: ["?", "？"]
+
+# saya载入的模块
+modules:
+  - "modules.Admin.get_ip"
+  - "modules.Yiyan.yiyan"
+  - "modules.FakeAI.AI"
+  - "modules.SearchThing.search_char"
+  - "modules.SearchThing.web_search"
+  - "modules.SeTu.SeTu"
+  - "modules.BreakTofu.break_tofu"
+  - "modules.AIDrawing.AI_drawing"
+  - "modules.ACGimg.ACGimg"
+
+modules_config:
+  search_char:
+    dict_path_windows: "目录\\机器人查字系统"
+    dict_path_linux: "目录/机器人查字系统"
+  ACGimg:
+    cool_down_time: 6
+    fqc_time: 30
+  SeTu:
+    font_path_windows: "目录\\字体\\loli.ttf"
+    font_path_linux: "目录/字体/loli.ttf"
+    cool_down_time: 10
+  break_tofu:
+    font_path_windows: "目录\\TH-Tshyn\\"
+    font_path_linux: "目录/TH-Tshyn/"
+  AI_drawing:
+    token_list: ["1919810114514", "1919810114514", "1919810114514"]
+    token_index: 0    # 指示使用第几个token
+    bot_tags: "1boy, 24_year_old"
+    cool_down_time: 6
+    fqc_time: 120
