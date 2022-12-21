@@ -1,14 +1,16 @@
 import re
 import os
 import math
+import unicodedata
+from pypinyin import pinyin
+from datetime import datetime
 
 from bot_init import BOT
 
-from pypinyin import pinyin
 from graia.saya import Channel
 from graia.ariadne import Ariadne
 from graia.ariadne.model import Friend, Group, Member
-from graia.ariadne.message.element import At, Plain
+from graia.ariadne.message.element import At, Plain, Forward, ForwardNode
 from graia.ariadne.message.chain import MessageChain
 from graia.saya.builtins.broadcast.schema import ListenerSchema
 from graia.ariadne.event.message import FriendMessage, GroupMessage
@@ -38,7 +40,9 @@ config = BOT.get_modules_config('search_char')
 #配置：
 #命令配置：
 #查找参数：
-search_mode_list = ["g", "G", "观", "观星三拼", "s", "S", "四", "四角", "四角号码", "u", "U"]
+search_mode_list = ["g", "G", "观", "观星三拼",
+"s", "S", "四", "四角", "四角号码",
+"u", "U"]
 #查字数据库配置：
 #码表型
 #名称：
@@ -56,7 +60,7 @@ elif BOT.sys == 'Linux':
 #消息响应：
 @channel.use(
     ListenerSchema(
-        listening_events=[GroupMessage],
+        listening_events=[GroupMessage, FriendMessage],
         inline_dispatchers=[
             Twilight(
                 UnionMatch(["?", "？", "#"]).space(SpacePolicy.PRESERVE),
@@ -66,47 +70,71 @@ elif BOT.sys == 'Linux':
         ]
     )
 )
-async def search_char(app: Ariadne, member: Member, group: Group, search_mode: RegexResult, search_char: RegexResult):
+async def search_char(app: Ariadne, target: Group | Friend, search_mode: RegexResult, search_char: RegexResult):
     #print(f"sm：{search_mode.},sc:{search_char}")
     search_mode = search_mode.result.display
     search_char = search_char.result.display
-    re_msg_u = ToUnicode(search_char)
     re_msg = None
     #查观星三拼
     if search_mode in ["g", "G", "观", "观星三拼"]:
-        re_msg_u = ')('.join(re_msg_u)
+        re_msg_u = ""
+        if len(search_char) == 1:
+            re_msg_u = f"({unicodeInfo(search_char)})"
         re_msg = MessageChain(
-            At(target=member.id),
-            Plain(f"【{search_char}】({re_msg_u})\n"),
+            Plain(f"【{search_char}】({getpinyin(search_char)}){re_msg_u}\n"),
             Plain(f"[观星三拼]{find_char(dict_g, search_char)}")
         )
     #查四角号码
     elif search_mode in ["s", "S", "四", "四角", "四角号码"]:
-        re_msg_u = ')('.join(re_msg_u)
+        re_msg_u = ""
+        if len(search_char) == 1:
+            re_msg_u = f"({unicodeInfo(search_char)})"
         re_msg = MessageChain(
-            At(target=member.id),
-            Plain(f"【{search_char}】({re_msg_u})\n"),
+            Plain(f"【{search_char}】{getpinyin(search_char)}{re_msg_u}\n"),
             Plain(f"[四角号码]{find_char(dict_s, search_char)}")
         )
-        pass
     #以字查U码：
     elif search_mode in ["u"]:
-        if len(search_char) == 1:
-            re_msg_u = '】【'.join(re_msg_u)
+        char_list = []
+        for c in search_char:
+            char_list.append(f"【{c}】{unicodeInfo(c)}")
+        if len(search_char) <= 7:
+            re_msg = MessageChain(
+                Plain("\n".join(char_list))
+            )
         else:
-            re_msg_u = re_msg_u
-        re_msg = MessageChain(
-            f"【{search_char}】【{re_msg_u}】"
-        )
+            fwd_node_list = [
+                    ForwardNode(
+                        target=2854196306,
+                        time=datetime.now(),
+                        message=MessageChain(
+                            Plain("\n".join(char_list))
+                        ),
+                        name=f"被夺舍的小冰",
+                    )
+                ]
+            fwd_node_list.append(
+                ForwardNode(
+                    target=2854196306,
+                    time=datetime.now(),
+                    message=MessageChain(
+                        Plain("查询结果↑")
+                    ),
+                    name=f"被夺舍的小冰",
+                )
+            )
+            re_msg = MessageChain(
+                Forward(fwd_node_list)
+            )
     #以U码查字：
     elif search_mode in ["U"]:
         re_msg_c = UnicodeTo(search_char)
         re_msg = MessageChain(
-            f"【{search_char}】->【{re_msg_c}】"
+            Plain(f"【{search_char}】->【{re_msg_c}】")
         )
     #发送信息：
     if re_msg != None:
-        await app.send_message(group, re_msg)
+        await app.send_message(target, re_msg)
 
 #查找字符信息：
 #以下为查字模块部分
@@ -149,6 +177,19 @@ def find_char(dt: dict, ch: str):
 #码表型字典数据装载：
 dict_g = load_dict(dict_path, dict_g_name)#观星三拼
 dict_s = load_dict(dict_path, dict_s_name)#四角号码
+
+# = = = = = 新函数开始 = = = = =
+def unicodeInfo(c: str):
+    return unicodedata.name(c, '未找到')
+
+def getpinyin(s: str):
+    p = pinyin(s, heteronym=True, errors='ignore')
+    p_list = []
+    for p1 in p:
+        p_list.append(p1[0])
+    return ' '.join(p_list)
+
+# = = = = = 新函数结束 = = = = =
 
 #以下为Unicode处理模块：
 def ToUTF16(kw_num):#某些字用unicode转utf16

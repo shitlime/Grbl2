@@ -55,7 +55,7 @@ url_bing = 'https://cn.bing.com/search?q='
         ]
     )
 )
-async def web_search(app: Ariadne, member: Member, target: Group | Friend, message: MessageChain, search_mode: RegexResult, search_string: RegexResult):
+async def web_search(app: Ariadne, target: Group | Friend, search_mode: RegexResult, search_string: RegexResult):
     search_mode = search_mode.result.display
     search_string = search_string.result.display
     re_msg = None
