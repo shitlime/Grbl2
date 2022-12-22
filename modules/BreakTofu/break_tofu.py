@@ -54,11 +54,20 @@ banText = ['', '[图片]', '[语音]', '[视屏]']
     )
 )
 async def break_tofu(app: Ariadne, group: Group, message: MessageChain):
-    quote = message.get(Quote)[0] # 得到quote
-    tofu = quote.origin[0].display # 得到quote中的文本（豆腐块）
+    # DEBUG
+    #print(f"message={message}")
+
+    tofu = ''
+    try:
+        quote = message.get(Quote)[0] # 得到quote
+        tofu = quote.origin[0].display # 得到quote中的文本（豆腐块）
+    except:
+        print("获取quote失败")
+
     # DEBUG
     #print(f"tofu= {tofu}")
     #print(f"tofu type: {type(tofu)}")
+
     if tofu not in banText:
         print(f"豆腐块:{tofu}")
         await app.send_message(
