@@ -100,7 +100,7 @@ async def get_img_from_img(token: str, i_img: bytes):
 
 #TEST
 if __name__ == "__main__":
-    token = input('touken: ')
+    token = input('token: ')
 # AI tag画图
     tags="1girl"
     #i = get_ai_drawing_img(token, tags)
