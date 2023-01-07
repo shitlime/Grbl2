@@ -2,3 +2,4 @@
 *.pyc
 grbl_config.yaml
 .gitignore
+__pycache__
