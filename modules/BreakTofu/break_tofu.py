@@ -2,12 +2,13 @@ import re
 import asyncio
 
 from .char2image import char2image
+from ..base.get_quote_message import get_quote_message
 
 from graia.saya import Channel
 from graia.ariadne import Ariadne
 from graia.ariadne.model import Group, Friend, Member
 from graia.ariadne.message.chain import MessageChain
-from graia.ariadne.message.element import Plain, Image, Quote, At
+from graia.ariadne.message.element import Plain, Image, Quote, At, Source
 from graia.saya.builtins.broadcast.schema import ListenerSchema
 from graia.ariadne.event.message import FriendMessage, GroupMessage
 from graia.ariadne.message.parser.twilight import(
@@ -53,26 +54,21 @@ banText = ['', '[图片]', '[语音]', '[视屏]']
         ]
     )
 )
-async def break_tofu(app: Ariadne, group: Group, message: MessageChain):
-    # DEBUG
-    #print(f"message={message}")
-
-    tofu = ''
-    try:
-        quote = message.get(Quote)[0] # 得到quote
-        tofu = quote.origin[0].display # 得到quote中的文本（豆腐块）
-    except:
-        print("获取quote失败")
+async def break_tofu(app: Ariadne, group: Group, source: Source):
+    # TESTING - 2
+    quote_message = await get_quote_message(source.id, group)
+    tofu = quote_message.origin.display    # 得到quote的文本
 
     # DEBUG
-    #print(f"tofu= {tofu}")
-    #print(f"tofu type: {type(tofu)}")
+    #print(f"quote_message={quote_message}")
+    #print(f"tofu={tofu}")
 
     if tofu not in banText:
         print(f"豆腐块:{tofu}")
         await app.send_message(
             group,
-            MessageChain(Image(data_bytes= await asyncio.to_thread(char2image, tofu)))
+            MessageChain(Image(data_bytes= await asyncio.to_thread(char2image, tofu))),
+            quote=source
         )
 
 @channel.use(
