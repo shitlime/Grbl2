@@ -41,6 +41,8 @@ saya.require("modules.break_tofu")
 keyWord = ["豆腐块", "豆腐塊"]
 # 不触发的文本：
 banText = ['', '[图片]', '[语音]', '[视屏]']
+# 豆腐块文本长度限制：
+max = 120
 
 @channel.use(
     ListenerSchema(
@@ -55,7 +57,6 @@ banText = ['', '[图片]', '[语音]', '[视屏]']
     )
 )
 async def break_tofu(app: Ariadne, group: Group, source: Source):
-    # TESTING - 2
     quote_message = await get_quote_message(source.id, group)
     tofu = quote_message.origin.display    # 得到quote的文本
 
@@ -84,9 +85,19 @@ async def break_tofu(app: Ariadne, group: Group, source: Source):
 )
 async def break_tofu_cmd(app: Ariadne, target: Group|Friend, tofu: RegexResult):
     tofu = tofu.result.display
-    if tofu not in banText and len(tofu) <= 120:
+    if len(tofu) > max:
+        await app.send_message(
+            target,
+            MessageChain(Plain(f"请求超出长度限制({max})喵！"))
+        )
+    elif tofu in banText:
+        pass
+    else:
         print(f"豆腐块cmd:{tofu}")
         await app.send_message(
             target,
-            MessageChain(Image(data_bytes= await asyncio.to_thread(char2image, tofu)))
+            MessageChain(
+                Plain(f"{tofu[:20]} : "),
+                Image(data_bytes= await asyncio.to_thread(char2image, tofu))
+                )
         )
