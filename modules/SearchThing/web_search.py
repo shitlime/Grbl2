@@ -1,9 +1,11 @@
+from ..base.get_quote_message import get_quote_message
+
 from urllib.parse import quote
 from graia.saya import Channel
 from graia.ariadne import Ariadne
 from graia.ariadne.model import Friend, Group, Member
 from graia.ariadne.message.chain import MessageChain
-from graia.ariadne.message.element import Plain
+from graia.ariadne.message.element import Plain, At, Source
 from graia.saya.builtins.broadcast.schema import ListenerSchema
 from graia.ariadne.event.message import FriendMessage, GroupMessage
 from graia.ariadne.message.parser.twilight import(
@@ -11,6 +13,8 @@ from graia.ariadne.message.parser.twilight import(
     FullMatch,
     UnionMatch,
     ParamMatch,
+    ElementMatch,
+    WildcardMatch,
     SpacePolicy,
     RegexResult
 )
@@ -56,8 +60,50 @@ url_bing = 'https://cn.bing.com/search?q='
     )
 )
 async def web_search(app: Ariadne, target: Group | Friend, search_mode: RegexResult, search_string: RegexResult):
+    # 提取匹配的文本
     search_mode = search_mode.result.display
     search_string = search_string.result.display
+    # 生成链接
+    re_msg = get_search_link(search_mode, search_string)
+    #发送消息
+    if re_msg != None:
+        await app.send_message(target, re_msg)
+
+# 回复式消息响应：
+@channel.use(
+    ListenerSchema(
+        listening_events=[GroupMessage],
+        inline_dispatchers=[
+            Twilight(
+                ElementMatch(At, optional=True),
+                WildcardMatch(),
+                FullMatch("帮楼上"),
+                "search_mode" << UnionMatch(search_mode_list)
+            )
+        ]
+    )
+)
+async def web_search_quote(app: Ariadne, group: Group, source: Source, search_mode: RegexResult):
+    # 提取匹配的文本
+    search_mode = search_mode.result.display
+    # 得到quote的文本
+    quote_message = await get_quote_message(source.id, group)
+    search_string = quote_message.origin.display
+    # 生成链接
+    re_msg = get_search_link(search_mode, search_string)
+    # 发送消息
+    if re_msg != None:
+        await app.send_message(group, re_msg)
+
+
+# 搜索链接生成：
+def get_search_link(search_mode: str, search_string: str):
+    """
+    根据搜索模式和搜索内容生成搜索链接
+    search_mode: 搜索模式
+    search_string: 搜索内容
+    Returns: 搜索链接
+    """
     re_msg = None
     if search_mode in ["m", "萌", "萌娘", "萌百", "萌娘百科"]:
         search_string = quote(search_string)
@@ -77,6 +123,4 @@ async def web_search(app: Ariadne, target: Group | Friend, search_mode: RegexRes
     elif search_mode in ["bing", "必", "必应", "必应搜索"]:
         search_string = quote(search_string)
         re_msg = MessageChain(Plain(url_bing + search_string))
-    #发送消息
-    if re_msg != None:
-        await app.send_message(target, re_msg)
+    return re_msg
