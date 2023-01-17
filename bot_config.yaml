@@ -17,7 +17,7 @@ ariadne_config:
   ws_client_config: "http://localhost:514"
 
 # 管理以及命令
-admin: 1919810
+admin: [1919810]
 cmd_prefix: ["|", "\\", "/"]
 search_prefix: ["?", "？"]
 
@@ -32,6 +32,8 @@ modules:
   - "modules.BreakTofu.break_tofu"
   - "modules.AIDrawing.AI_drawing"
   - "modules.ACGimg.ACGimg"
+  - "modules.GroupEventAction.MemberJoinLeave"
+  - "modules.GroupEventAction.GroupNameChange"
 
 modules_config:
   search_char:
@@ -53,3 +55,7 @@ modules_config:
     bot_tags: "1boy, 24_year_old"
     cool_down_time: 6
     fqc_time: 120
+  MemberJoinLeave:
+    enable_group: [1145141919810]
+  GroupNameChange:
+    enable_group: [1145141919810]
