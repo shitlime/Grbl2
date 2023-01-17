@@ -69,19 +69,20 @@ def check_frequency(fqc_dict: dict, max_frequency: int):
 
 # ===== 目标控制 =====
 #指定响应对象：
-def check_friend(*friends: int):  #指定响应的好友
+def check_friend(friends: list[int]):  #指定响应的好友
     async def check_friend_id(friend: Friend):
         if friend.id not in friends:
             raise ExecutionStop
     return Depend(check_friend_id)
 
-def check_member(*members: int):  #指定响应的群成员
+def check_member(members: list[int]):  #指定响应的群成员
     async def check_member_id(member: Member):
         if member.id not in members:
             raise ExecutionStop
     return Depend(check_member_id)
 
-def check_group(*groups: int):  #指定响应的群
+def check_group(groups: list[int]):  #指定响应的群
     async def check_group_id(group: Group):
         if group.id not in groups:
             raise ExecutionStop
+    return Depend(check_group_id)
