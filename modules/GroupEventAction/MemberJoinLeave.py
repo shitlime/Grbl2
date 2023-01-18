@@ -11,12 +11,12 @@ from graia.ariadne.event.mirai import MemberLeaveEventQuit, MemberJoinEvent
 from graia.saya.builtins.broadcast.schema import ListenerSchema
 
 channel = Channel.current()
-channel.name("群成员离开时动作")
+channel.name("群成员加入/离开时动作")
 channel.author("Shitlime")
 channel.description("""
-群成员离开时Bot的动作
+群成员加入/离开时Bot的动作
 
-功能：群成员离开时会发送消息
+功能：群成员加入/离开时会发送消息
 """)
 
 config = BOT.get_modules_config("MemberJoinLeave")
@@ -59,6 +59,6 @@ async def memberJoinAction(app: Ariadne, member: Member):
         member,
         MessageChain(
             At(target=member),
-            Plain("欢迎入群，希望大家能够友好相处")
+            Plain(" 欢迎入群，希望大家能够友好相处")
         )
     )
