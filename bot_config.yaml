@@ -33,7 +33,8 @@ modules:
   - "modules.AIDrawing.AI_drawing"
   - "modules.ACGimg.ACGimg"
   - "modules.GroupEventAction.MemberJoinLeave"
-  - "modules.GroupEventAction.GroupNameChange"
+  - "modules.GroupEventAction.InfosChange"
+  - "modules.Admin.recall_message"
 
 modules_config:
   search_char:
@@ -57,5 +58,5 @@ modules_config:
     fqc_time: 120
   MemberJoinLeave:
     enable_group: [1145141919810]
-  GroupNameChange:
+  InfosChange:
     enable_group: [1145141919810]
