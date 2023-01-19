@@ -73,9 +73,13 @@ async def memberCardChangeAction(app: Ariadne, group: Group, event: MemberCardCh
     )
 )
 async def memberSpecialTitleChangeAction(app: Ariadne, group: Group, event: MemberSpecialTitleChangeEvent):
+    origin = Plain("")
+    if event.origin:
+        origin = Plain("\n原头衔【{event.origin}】")
     await app.send_group_message(
         group,
         MessageChain(
-            Plain(f"恭喜！ {event.member} 的头衔由 {event.origin} 被群主更新为 {event.current}")
+            Plain(f"恭喜！ {event.member} 获得群主授予的【{event.current}】头衔"),
+            origin
         )
     )
