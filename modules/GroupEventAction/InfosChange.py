@@ -79,7 +79,7 @@ async def memberSpecialTitleChangeAction(app: Ariadne, group: Group, event: Memb
     await app.send_group_message(
         group,
         MessageChain(
-            Plain(f"恭喜！ {event.member} 获得群主授予的【{event.current}】头衔"),
+            Plain(f"恭喜！ {event.member.name} 获得群主授予的【{event.current}】头衔"),
             origin
         )
     )
