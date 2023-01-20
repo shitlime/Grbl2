@@ -35,6 +35,7 @@ modules:
   - "modules.GroupEventAction.MemberJoinLeave"
   - "modules.GroupEventAction.InfosChange"
   - "modules.Admin.recall_message"
+  - "modules.SixtySecNews.SixtySecNews"
 
 modules_config:
   search_char:
@@ -60,3 +61,7 @@ modules_config:
     enable_group: [1145141919810]
   InfosChange:
     enable_group: [1145141919810]
+  SixtySecNews:
+    enable_group: [1145141919810]
+    enable_friend: []
+    send_time: "30 15 * * *" # 遵循crontab的方式 例：'30 15 * * *'表示每天的15:30
