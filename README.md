@@ -12,14 +12,22 @@
 ## Ariadne的安装
 
 ### 安装
-安装Ariadne
+安装Ariadne  
+*基础*
 ```
 pip install graia-ariadne
 ```
 
-安装Saya
+安装Saya  
+*支持Bot分模块*
 ```
 pip install graia-saya
+```
+
+安装Graia Scheduler  
+*支持Bot定时发送消息*
+```
+pip install graia-scheduler
 ```
 
 ### 其他
@@ -42,7 +50,7 @@ pip install pyyaml
 实际使用时请按模板写一个名为 `grbl_config.yaml` 的配置文件  
 
 ## 说明
-分为一下四个主要部分
+分为以下四个主要部分
 ```yaml
 # 基本信息
 info:
@@ -53,7 +61,7 @@ ariadne_config:
 # Saya载入的模块（这些模块会被运行，格式基本按Python的标准写）
 modules:
 
-# 各模块的配置（见模块说明）
+# 各模块的配置（见对应模块源码，有部分注释）
 modules_config:
 ```
 
