@@ -75,7 +75,7 @@ async def memberCardChangeAction(app: Ariadne, group: Group, event: MemberCardCh
 async def memberSpecialTitleChangeAction(app: Ariadne, group: Group, event: MemberSpecialTitleChangeEvent):
     origin = Plain("")
     if event.origin:
-        origin = Plain("\n原头衔【{event.origin}】")
+        origin = Plain(f"\n原头衔【{event.origin}】")
     await app.send_group_message(
         group,
         MessageChain(
