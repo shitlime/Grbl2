@@ -31,6 +31,15 @@ async def get_yiyan(c: list[str], encode: str, min_length=1, max_length=100):
             else:
                 return r.status
 
+def get_page_url(uuid: str) -> str:
+    """
+    输出对应uuid的完整信息页URL
+    uuid: 一言唯一标识
+
+    Returns: URL
+    """
+    return f"https://hitokoto.cn?uuid={uuid}"
+
 if __name__ == '__main__':
     c = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l']
     c2 = ['k', 'f']
@@ -51,3 +60,4 @@ if __name__ == '__main__':
     if m3 == None:
         m3 = ''
     print(f"{m1}\n\t——{m2} {m3}")
+    print(f"URL:{get_page_url(result['uuid'])}")
