@@ -59,7 +59,9 @@ max = 120
 async def break_tofu(app: Ariadne, group: Group, source: Source):
     quote_message = await get_quote_message(source.id, group)
     tofu = ''    # tofu默认为空字符串（在banText中）
-    if quote_message:
+    if type(quote_message) == Quote:
+        tofu = quote_message.origin.display    # 得到quote的文本
+    else:
         tofu = quote_message.message_chain.display    # 得到quote的文本
 
     # DEBUG
