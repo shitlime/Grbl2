@@ -88,7 +88,7 @@ async def web_search_quote(app: Ariadne, group: Group, source: Source, search_mo
     search_mode = search_mode.result.display
     # 得到quote的文本
     quote_message = await Ariadne.current().get_message_from_id(source.id, group)
-    search_string = quote_message.origin.display
+    search_string = quote_message.quote.origin.display
     # 生成链接
     re_msg = get_search_link(search_mode, search_string)
     # 发送消息
