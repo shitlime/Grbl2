@@ -1,3 +1,6 @@
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+
 from bot_init import BOT
 
 from graia.saya import Saya
