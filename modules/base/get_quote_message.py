@@ -14,5 +14,5 @@ async def get_quote_message(message_id: int, group: Group):
         quote_message = await Ariadne.current().get_message_from_id(message=current_message.quote.id, target=group)
         return quote_message
     except:
-        print("get_quote_message failed!")
-        return None
+        print("get_quote_message failed! return current_message.")
+        return current_message
