@@ -55,7 +55,8 @@ yiyan_type = {'动画': 'a', '漫画': 'b', '游戏': 'c', '文学': 'd',
                 WildcardMatch(),
                 UnionMatch(get_g),
                 "yiyan_type_cn" << RegexMatch(f"({'|'.join(list(yiyan_type.keys()))})?( {'| '.join(list(yiyan_type.keys()))})*"),
-                "full_info" << RegexMatch("(高级|\-f)?")
+                "full_info" << RegexMatch("(高级|\-f)?"),
+                "show_help" << RegexMatch("(帮助|\-h)?")
             )
         ]
     )
@@ -67,12 +68,13 @@ yiyan_type = {'动画': 'a', '漫画': 'b', '游戏': 'c', '文学': 'd',
             Twilight(
                 UnionMatch(get_f),
                 "yiyan_type_cn" << RegexMatch(f"({'|'.join(list(yiyan_type.keys()))})?( {'| '.join(list(yiyan_type.keys()))})*"),
-                "full_info" << RegexMatch("(高级|\-f)?")
+                "full_info" << RegexMatch("(高级|\-f)?"),
+                "show_help" << RegexMatch("(帮助|\-h)?")
             )
         ]
     )
 )
-async def yiyan_group(app: Ariadne, target: Group | Friend, yiyan_type_cn: RegexResult, full_info: RegexResult):
+async def yiyan_group(app: Ariadne, target: Group | Friend, yiyan_type_cn: RegexResult, full_info: RegexResult, show_help: RegexResult):
     # deal with arguments
     #print(yiyan_type_cn)
     #print(type(yiyan_type_cn))
@@ -86,8 +88,7 @@ async def yiyan_group(app: Ariadne, target: Group | Friend, yiyan_type_cn: Regex
         # default: all type
         c = list(yiyan_type.values())
     full_info = full_info.result.display
-    if full_info!= '':
-        full_info = True
+    show_help = show_help.result.display
 
     # get yiyan
     yiyan_json = await get_yiyan(c, 'json', max_length=500)
@@ -99,6 +100,7 @@ async def yiyan_group(app: Ariadne, target: Group | Friend, yiyan_type_cn: Regex
         from_where = yiyan_json['from']
 
     # send message
+    # send full info
     if full_info:
         fwd_node_list = [
             ForwardNode(
@@ -138,6 +140,16 @@ async def yiyan_group(app: Ariadne, target: Group | Friend, yiyan_type_cn: Regex
                 Forward(fwd_node_list)
             )
         )
+    #send help
+    elif show_help:
+        await app.send_message(
+            target,
+            MessageChain(
+                Plain("指令格式：\n"),
+                Plain(f"一言 ({' '.join(list(yiyan_type.keys()))})? (高级)? (帮助)?")
+            )
+        )
+    # default: send yiyan
     else:
         await app.send_message(
             target,
