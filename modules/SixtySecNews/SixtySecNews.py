@@ -2,6 +2,7 @@ import asyncio
 
 from bot_init import BOT
 from .get_60s_news import get_news_img
+from ..base.check import check_member, check_friend
 
 from graia.saya import Channel
 from graia.ariadne.app import Ariadne
@@ -10,6 +11,13 @@ from graia.ariadne.message.chain import MessageChain
 from graia.ariadne.message.element import Image, Plain
 from graia.scheduler import timers
 from graia.scheduler.saya import SchedulerSchema
+from graia.ariadne.model import Friend, Group
+from graia.saya.builtins.broadcast.schema import ListenerSchema
+from graia.ariadne.event.message import FriendMessage, GroupMessage
+from graia.ariadne.message.parser.twilight import(
+    Twilight,
+    UnionMatch,
+)
 
 channel = Channel.current()
 channel.name("定时发送60秒看世界新闻")
@@ -57,3 +65,46 @@ async def send_news_img(app: Ariadne):
             )
     except:
         print("定时发送60秒看世界新闻 发送消息时错误")
+
+# 管理员指令：
+@channel.use(
+    ListenerSchema(
+        listening_events=[GroupMessage],
+        decorators=[check_member(BOT.admin)],
+        inline_dispatchers=[
+            Twilight(
+                UnionMatch(BOT.cmd_prefix),
+                UnionMatch(['60秒新闻', '60秒看世界'])
+            )
+        ]
+    )
+)
+@channel.use(
+    ListenerSchema(
+        listening_events=[FriendMessage],
+        decorators=[check_friend(BOT.admin)],
+        inline_dispatchers=[
+            Twilight(
+                UnionMatch(BOT.cmd_prefix),
+                UnionMatch(['60秒新闻', '60秒看世界'])
+            )
+        ]
+    )
+)
+async def send_news_img_admin(app: Ariadne, target: Friend | Group):
+    news_img = await get_news_img()
+    if type(news_img) == int:
+        await app.send_message(
+            target,
+            MessageChain(
+                Plain(f"err-or发生{news_img}")
+            )
+        )
+    else:
+        await app.send_message(
+            target,
+            MessageChain(
+                Image(base64=news_img),
+                Plain("请收好，这是今日份的报纸哦")
+            )
+        )
