@@ -1,4 +1,5 @@
 import os
+import io
 import math
 from PIL import Image, ImageFont, ImageDraw, ImageShow
 
@@ -74,7 +75,11 @@ def char2image(string: str, font_size=60, background_color=(255, 255, 255), char
                 continue
         draw_text.text((x, y), c, char_color, font)
         x += font.getlength(c)
-    return img
+    
+    # io
+    result = io.BytesIO()
+    img.save(result, format='png', save_all=True)
+    return result.getvalue()
 
 def truetype_list_creater(fonts: dict, font_size=60):
     # create fonts list
