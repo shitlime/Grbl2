@@ -1,7 +1,7 @@
 import re
 import asyncio
 
-from .char2image import char2image
+from .char2image2 import char2image
 from ..base.get_quote_message import get_quote_message
 
 from graia.saya import Channel
