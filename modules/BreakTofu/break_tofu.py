@@ -110,5 +110,5 @@ async def get_tofu_img(tofu: str):
     if len(tofu) > 26:
         return await asyncio.to_thread(char2image, tofu, offset= (100, 100, 70))
     else:
-        return await asyncio.to_thread(char2image, tofu, fontsize= 120, offset= (10, 10, 10))
+        return await asyncio.to_thread(char2image, tofu, font_size= 120, offset= (10, 10, 10))
     
