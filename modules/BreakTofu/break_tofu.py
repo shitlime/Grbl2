@@ -72,7 +72,7 @@ async def break_tofu(app: Ariadne, group: Group, source: Source):
         print(f"豆腐块:{tofu}")
         await app.send_message(
             group,
-            MessageChain(Image(data_bytes= await asyncio.to_thread(char2image, tofu))),
+            MessageChain(Image(data_bytes= await get_tofu_img())),
             quote=source
         )
 
@@ -102,6 +102,13 @@ async def break_tofu_cmd(app: Ariadne, target: Group|Friend, tofu: RegexResult):
             target,
             MessageChain(
                 Plain(f"{tofu[:20]} : "),
-                Image(data_bytes= await asyncio.to_thread(char2image, tofu))
+                Image(data_bytes= await get_tofu_img())
                 )
         )
+
+async def get_tofu_img(tofu: str):
+    if len(tofu) > 26:
+        return await asyncio.to_thread(char2image, tofu, offset= (100, 100, 70))
+    else:
+        return await asyncio.to_thread(char2image, tofu, fontsize= 120, offset= (10, 10, 10))
+    
