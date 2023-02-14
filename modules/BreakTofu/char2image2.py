@@ -81,7 +81,7 @@ def char2image(
         x += font.getlength(c)
     
     # DEBUG
-    return img
+    #return img
 
     # io
     result = io.BytesIO()
