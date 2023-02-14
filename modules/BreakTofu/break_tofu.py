@@ -72,7 +72,7 @@ async def break_tofu(app: Ariadne, group: Group, source: Source):
         print(f"豆腐块:{tofu}")
         await app.send_message(
             group,
-            MessageChain(Image(data_bytes= await get_tofu_img())),
+            MessageChain(Image(data_bytes= await get_tofu_img(tofu))),
             quote=source
         )
 
@@ -102,7 +102,7 @@ async def break_tofu_cmd(app: Ariadne, target: Group|Friend, tofu: RegexResult):
             target,
             MessageChain(
                 Plain(f"{tofu[:20]} : "),
-                Image(data_bytes= await get_tofu_img())
+                Image(data_bytes= await get_tofu_img(tofu))
                 )
         )
 
