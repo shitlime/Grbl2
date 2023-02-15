@@ -43,9 +43,9 @@ def char2image(
     Returns: 图片/img
     """
     fonts_dict = truetype_fonts_creater(fonts, font_size)
-    # 借用画布、画笔
+    # 借用临时画布、画笔
     tmp = Image.new("RGB", (0, 0), background_color)
-    draw_text = ImageDraw.Draw(tmp)
+    tmp_draw = ImageDraw.Draw(tmp)
 
 
     # --- TESTING ---
@@ -58,7 +58,7 @@ def char2image(
     # 输入偏移信息、理想化后的字符串、字体、行间距
     img_size = draw_text.multiline_textbbox((x*2, y*2), idealize_text(string), list(fonts_dict.values())[0], spacing=line_space)
     # 删除借用的画布、画笔
-    del tmp, draw_text
+    del tmp, tmp_draw
     t_w = img_size[2]
     t_h = img_size[3]
     w = t_w
@@ -79,10 +79,6 @@ def char2image(
                 continue
         draw_text.text((x, y), c, char_color, font)
         x += font.getlength(c)
-    
-    # DEBUG
-    #return img
-
     # io
     result = io.BytesIO()
     img.save(result, format='png', save_all=True)
@@ -90,7 +86,7 @@ def char2image(
 
 def truetype_fonts_creater(fonts: dict, font_size: int):
     """
-    fonts: str -> fonts: ImageFont
+    fonts: {Plane: str} -> fonts: {Plane: ImageFont}
 
     fonts: fonts = {"P0": Plane0_font, "P1": Plane1_font, "P2": Plane2_font}
     font_size: font size
