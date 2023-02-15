@@ -2,33 +2,12 @@ import os
 import io
 import math
 from PIL import Image, ImageFont, ImageDraw, ImageShow
+from fontTools.ttLib import TTFont, TTCollection
 
-from bot_init import BOT
-
-# config
-config = BOT.get_modules_config('break_tofu')
-#说明： 字体文件来自 天珩全字库(TH-Tshyn)(http://cheonhyeong.com/Simplified/download.html)
-#全字库路径
-if BOT.sys == 'Windows':
-    font_path = config['font_path_windows']
-elif BOT.sys == 'Linux':
-    font_path = config['font_path_linux']
-
-# font config
-fonts = {
-# format:
-# "Plane" : "font"
-
-# "TH-Times.ttc",
-"P0" : "TH-Tshyn-P0.ttf",
-"P1" : "TH-Tshyn-P1.ttf",
-"P2" : "TH-Tshyn-P2.ttf",
-# "TH-Tshyn-P16.ttf"
-}
 
 def char2image(
     string: str,
-    font_size=60,
+    fonts_dict: list,
     offset=(20, 60, 30),
     background_color=(255, 255, 255),
     char_color=(0, 0, 0)
@@ -42,7 +21,6 @@ def char2image(
 
     Returns: 图片/img
     """
-    fonts_dict = truetype_fonts_creater(fonts, font_size)
     # 借用临时画布、画笔
     tmp = Image.new("RGB", (0, 0), background_color)
     tmp_draw = ImageDraw.Draw(tmp)
@@ -54,13 +32,16 @@ def char2image(
     y = offset[1]
     init_x = x
     line_space = offset[2]
-    # 进行图片大小的预测计算
+    # 进行图片大小的预测计算，取(宽，高)最大值
     # 输入偏移信息、理想化后的字符串、字体、行间距
-    img_size = draw_text.multiline_textbbox((x*2, y*2), idealize_text(string), list(fonts_dict.values())[0], spacing=line_space)
+    img_size = ()
+    for font in fonts_dict:
+        s = tmp_draw.multiline_textbbox((x*2, y*2), idealize_text(string), font[1], spacing=line_space)
+        img_size = max(img_size, (s[2], s[3]))
     # 删除借用的画布、画笔
     del tmp, tmp_draw
-    t_w = img_size[2]
-    t_h = img_size[3]
+    t_w = img_size[0]
+    t_h = img_size[1]
     w = t_w
     h = t_h
     img = Image.new("RGB", (w, h), background_color)
@@ -86,7 +67,7 @@ def char2image(
 
 def truetype_fonts_creater(fonts: dict, font_size: int):
     """
-    fonts: {Plane: str} -> fonts: {Plane: ImageFont}
+    fonts  {Plane: str} -> fonts: {Plane: ImageFont}
 
     fonts: fonts = {"P0": Plane0_font, "P1": Plane1_font, "P2": Plane2_font}
     font_size: font size
@@ -99,6 +80,28 @@ def truetype_fonts_creater(fonts: dict, font_size: int):
         fonts_dict[p] = ImageFont.truetype(os.path.join(font_path, f), font_size)
     return fonts_dict
 
+def fonts_loader(fonts: dict, fonts_path: str, font_size: int)->list:
+    """
+    create a fonts dict like `[[Cmap, ImageFont], ……]`
+
+    fonts: `{font_info : font_name}`
+    font_size: font size
+    """
+    fonts_dict = []
+    for f in fonts.values():
+        f = os.path.join(fonts_path, f)
+        # get Cmap as key
+        if os.path.splitext(f)[-1] == '.ttf':
+            ttf = TTFont(f)
+            key = tuple(ttf.getBestCmap().keys())
+        else:
+            continue
+        # create ImageFont as value
+        value = ImageFont.truetype(f, font_size)
+        # push key and value to fonts_dict
+        fonts_dict.append([key, value])
+    return fonts_dict
+
 def font_selector(char, fonts_dict):
     """
     Select a font to draw char.
@@ -108,26 +111,10 @@ def font_selector(char, fonts_dict):
 
     Returns: font
     """
-    char = ord(char)
-    # H G -> Plane 1
-    if (
-        0x30000 <= char <= 0x3134a
-        or 0x31350 <= char <= 0x323af
-    ):
-        font = fonts_dict["P1"]
-    # B C D E F -> Plane 2
-    elif (
-        0x20000 <= char <= 0x2A6D6
-        or 0x2A700 <= char <= 0x2B734
-        or 0x2B740 <= char <= 0x2B81D
-        or 0x2B820 <= char <= 0x2CEAF
-        or 0x2CEB0 <= char <= 0x2EBEF
-    ):
-        font = fonts_dict["P2"]
-    # default -> Plane 0
-    else:
-        font = fonts_dict["P0"]
-    return font
+    for fd in fonts_dict:
+        if ord(char) in fd[0]:
+            return fd[1]
+    return fonts_dict[0][1]
 
 def idealize_text(text: str) -> str:
     """
@@ -146,3 +133,8 @@ def idealize_text(text: str) -> str:
             sl2.append(sl[i])
         i += 1
     return '\n'.join(sl2)
+
+
+if __name__ == '__main__':
+    fd = fonts_loader(fonts, fonts_path, font_size)
+    img = char2image(i, fd)

@@ -39,6 +39,7 @@ pip install graia-scheduler
 pip install pillow
 pip install pypinyin
 pip install pyyaml
+pip install fonttools
 ```
 *未经过测试，可能漏了一些（屑~*
 
