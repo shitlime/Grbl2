@@ -10,6 +10,7 @@ from graia.ariadne import Ariadne
 from graia.ariadne.model import Group, Friend, Member
 from graia.ariadne.message.chain import MessageChain
 from graia.ariadne.message.element import Plain, Image, Quote, At, Source
+from graia.ariadne.message.parser.base import MatchTemplate, Mention
 from graia.saya.builtins.broadcast.schema import ListenerSchema
 from graia.ariadne.event.message import FriendMessage, GroupMessage
 from graia.ariadne.message.parser.twilight import(
@@ -20,6 +21,7 @@ from graia.ariadne.message.parser.twilight import(
     ParamMatch,
     WildcardMatch,
     SpacePolicy,
+    RegexMatch,
     RegexResult
 )
 
@@ -75,7 +77,6 @@ fonts = {
         inline_dispatchers=[
             Twilight(
                 ElementMatch(At, optional=True),
-                WildcardMatch(),
                 UnionMatch(keyWord)
             )
         ]
@@ -84,8 +85,8 @@ fonts = {
 async def break_tofu(app: Ariadne, group: Group, source: Source):
     quote_message = await get_quote_message(source.id, group)
     # DEBUG
-    print(f"quote_message={quote_message}")
-    print(f"type(qm)={type(quote_message)}")
+    # print(f"quote_message={quote_message}")
+    # print(f"type(qm)={type(quote_message)}")
 
     tofu = ''    # tofu默认为空字符串（在banText中）
     if type(quote_message) == Quote:
@@ -112,24 +113,27 @@ async def break_tofu(app: Ariadne, group: Group, source: Source):
         inline_dispatchers=[
             Twilight(
                 UnionMatch(keyWord),
-                "tofu" << WildcardMatch()
+                WildcardMatch()
             )
         ]
     )
 )
-async def break_tofu_cmd(app: Ariadne, target: Group|Friend, tofu: RegexResult):
-    tofu = tofu.result.display
-    if tofu in banText:
-        pass
-    else:
-        print(f"豆腐块cmd:{tofu}")
-        await app.send_message(
-            target,
-            MessageChain(
-                Plain(f"{tofu[:20]} : "),
-                Image(data_bytes= await get_tofu_img(tofu, fd_cache))
-                )
-        )
+async def break_tofu_cmd(app: Ariadne, target: Group|Friend, msg: MessageChain):
+    tofu = re.search(r'^豆腐块 ?(.+)', msg.display, flags=re.DOTALL)
+    # 如果豆腐块指令格式正确
+    if tofu:
+        tofu = tofu.groups()[0]    # 取出豆腐文本
+        if tofu in banText:
+            pass
+        else:
+            print(f"豆腐块cmd:{tofu}")
+            await app.send_message(
+                target,
+                MessageChain(
+                    Plain(f"{tofu[:20]} : "),
+                    Image(data_bytes= await get_tofu_img(tofu, fd_cache))
+                    )
+            )
 
 # 渲染豆腐块
 async def get_tofu_img(tofu: str, fd_cache: list):
