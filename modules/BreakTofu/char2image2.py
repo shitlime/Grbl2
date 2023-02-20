@@ -60,6 +60,8 @@ def char2image(
                 continue
         draw_text.text((x, y), c, char_color, font)
         x += font.getlength(c)
+    # TEST
+    # return img 
     # io
     result = io.BytesIO()
     img.save(result, format='png', save_all=True)
@@ -136,5 +138,15 @@ def idealize_text(text: str) -> str:
 
 
 if __name__ == '__main__':
-    fd = fonts_loader(fonts, fonts_path, font_size)
-    img = char2image(i, fd)
+    fonts = {
+        "ttc" : "TH-Times.ttc",
+        "P0" : "TH-Tshyn-P0.ttf",
+        "P1" : "TH-Tshyn-P1.ttf",
+        "P2" : "TH-Tshyn-P2.ttf",
+        "P16" : "TH-Tshyn-P16.ttf"
+    }
+    fpath = input('fpath=')
+    string = input('text:\n')
+    fd = fonts_loader(fonts, fpath, 60)
+    img = char2image(string, fd)
+    img.show()
