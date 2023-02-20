@@ -67,7 +67,7 @@ def char2image(
     img.save(result, format='png', save_all=True)
     return result.getvalue()
 
-def truetype_fonts_creater(fonts: dict, font_size: int):
+def truetype_fonts_creater(fonts: dict, font_path: str, font_size: int):
     """
     fonts  {Plane: str} -> fonts: {Plane: ImageFont}
 
