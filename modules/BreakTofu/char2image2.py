@@ -4,6 +4,7 @@ import math
 from PIL import Image, ImageFont, ImageDraw, ImageShow
 from fontTools.ttLib import TTFont, TTCollection
 
+# from guess_tofu_core import GuessTofu
 
 def char2image(
     string: str,
@@ -60,9 +61,11 @@ def char2image(
                 continue
         draw_text.text((x, y), c, char_color, font)
         x += font.getlength(c)
-    # TEST
-    # return img 
-    # io
+    
+    # return
+    return img
+
+def image2bytes(img: Image)->bytes:
     result = io.BytesIO()
     img.save(result, format='png', save_all=True)
     return result.getvalue()
@@ -148,5 +151,14 @@ if __name__ == '__main__':
     fpath = input('fpath=')
     string = input('text:\n')
     fd = fonts_loader(fonts, fpath, 60)
-    img = char2image(string, fd)
-    img.show()
+    img = char2image(string, fd, offset=(10, 10, 10))
+    #img.show()
+    # ------------------
+    # GuessTofu
+    gt = GuessTofu(2)
+    gt.set_img(img)
+    print(gt.rule)
+    gt.masker()
+    gt.img.show()
+    gt.img_masked.show()
+    # ------------------

@@ -2,11 +2,13 @@ import re
 import asyncio
 
 from bot_init import BOT
-from .char2image2 import char2image, fonts_loader
+from .char2image2 import char2image, fonts_loader, image2bytes
+from .guess_tofu_core import GuessTofu
 from ..base.get_quote_message import get_quote_message
 
 from graia.saya import Channel
 from graia.ariadne import Ariadne
+from graia.ariadne.util.interrupt import FunctionWaiter
 from graia.ariadne.model import Group, Friend, Member
 from graia.ariadne.message.chain import MessageChain
 from graia.ariadne.message.element import Plain, Image, Quote, At, Source
@@ -103,10 +105,19 @@ async def break_tofu(app: Ariadne, group: Group, source: Source):
         print(f"豆腐块:{tofu}")
         await app.send_message(
             group,
-            MessageChain(Image(data_bytes= await get_tofu_img(tofu, fd_cache))),
+            # MessageChain(Image(data_bytes= await get_tofu_img(tofu, fd_cache))),
+            MessageChain(
+                Image(
+                    data_bytes= await asyncio.to_thread(
+                        image2bytes,
+                        await get_tofu_img(tofu, fd_cache)
+                    )
+                )
+            ),
             quote=source
         )
 
+# 命令式豆腐块响应
 @channel.use(
     ListenerSchema(
         listening_events=[GroupMessage, FriendMessage],
@@ -131,9 +142,123 @@ async def break_tofu_cmd(app: Ariadne, target: Group|Friend, msg: MessageChain):
                 target,
                 MessageChain(
                     Plain(f"{tofu[:20]} : "),
-                    Image(data_bytes= await get_tofu_img(tofu, fd_cache))
+                    # Image(data_bytes= await get_tofu_img(tofu, fd_cache))
+                    Image(
+                        data_bytes= await asyncio.to_thread(
+                            image2bytes,
+                            await get_tofu_img(tofu, fd_cache)
+                        )
                     )
+                )
             )
+
+
+# 猜豆腐块游戏
+@channel.use(
+    ListenerSchema(
+        listening_events=[GroupMessage, FriendMessage],
+        inline_dispatchers=[
+            Twilight(
+                UnionMatch(['猜豆腐', '豆腐块游戏']),
+                "level" << UnionMatch([str(i) for i in range(6) ])
+            )
+        ]
+    )
+)
+async def guess_tofu(app: Ariadne, target: Group|Friend, level: RegexResult):
+    # 根据等级生成猜豆腐实例
+    level = int(level.result.display)
+    gt = GuessTofu(level)
+    gt.set_img(await get_tofu_img(gt.tofu, fd_cache))
+    gt.masker()
+
+    await app.send_message(
+        target,
+        MessageChain(
+            Plain(f"【猜豆腐】-等级{level}\n"),
+            Plain(f"规则：发送下图的文字\n"),
+            Plain(f"注：超过1分钟未回应视为败北"),
+            Image(
+                data_bytes= await asyncio.to_thread(
+                    image2bytes,
+                    gt.img_masked
+                )
+            )
+        )
+    )
+
+    async def waiter(waiter_target: Group|Friend , waiter_message: MessageChain):
+        if type(waiter_target) == type(target) and waiter_target.id == target.id:
+            answer = waiter_message.display
+            if len(answer) == 1:
+                if answer == gt.tofu:
+                    await app.send_message(
+                        target,
+                        MessageChain(
+                            Plain('恭喜你答对了喵~↑\n'),
+                            Plain(f'正确答案：{gt.tofu}')
+                        )
+                    )
+                    return 0    # 答对0
+                else:
+                    await app.send_message(
+                        target,
+                        MessageChain(
+                            Plain('很遗憾 答错了喵~↓ '),
+                            Plain('请继续猜喵~→')
+                        )
+                    )
+                    return 1    # 答错1
+            elif answer in ['退出游戏', '结束游戏']:
+                return -1    # 退出-1
+            elif re.match(r'提示([1-9]?)', answer):
+                # 降低难度
+                if len(answer) == 2:
+                    gt.mask_rule_reduce2()
+                    gt.masker()
+                else:
+                    for i in range(int(answer[2])):
+                        gt.mask_rule_reduce2()
+                        gt.masker()
+                await app.send_friend_message(
+                    target,
+                    MessageChain(
+                        Plain('猜不出来吗？给你点提示喵~→'),
+                        Image(
+                            data_bytes= await asyncio.to_thread(
+                                image2bytes,
+                                gt.img_masked
+                            )
+                        )
+                    )
+                )
+                return 2    # 降低难度2
+    
+    answer = None
+    while answer != 0:
+        answer = await FunctionWaiter(waiter, [GroupMessage, FriendMessage]).wait(timeout=60)
+        if answer is None:
+            await app.send_message(
+                target,
+                MessageChain(
+                    Plain('哼 哼 时间到了喵~↑\n'),
+                    Plain('由于没有猜出答案，覌白获得了胜利喵~↑\n'),
+                    Plain(f'正确答案：{gt.tofu}')
+                )
+            )
+            break
+        elif answer == -1:
+            await app.send_message(
+                target,
+                MessageChain(
+                    Plain('杂🐟 这么简单都猜不出来喵~↑\n'),
+                    Plain('由于没有猜出答案，覌白获得了胜利喵~↑\n'),
+                    Plain(f'正确答案：{gt.tofu}')
+                )
+            )
+            break
+    del gt
+
 
 # 渲染豆腐块
 async def get_tofu_img(tofu: str, fd_cache: list):
