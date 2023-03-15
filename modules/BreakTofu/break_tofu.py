@@ -160,7 +160,7 @@ async def break_tofu_cmd(app: Ariadne, target: Group|Friend, msg: MessageChain):
         inline_dispatchers=[
             Twilight(
                 UnionMatch(['猜豆腐', '豆腐块游戏']),
-                "level" << UnionMatch([str(i) for i in range(6) ])
+                "level" << UnionMatch([str(i) for i in range(7) ])
             )
         ]
     )
@@ -196,7 +196,13 @@ async def guess_tofu(app: Ariadne, target: Group|Friend, level: RegexResult):
                         target,
                         MessageChain(
                             Plain('恭喜你答对了喵~↑\n'),
-                            Plain(f'正确答案：{gt.tofu}')
+                            Plain(f'正确答案：【{gt.tofu}】'),
+                            Image(
+                                data_bytes= await asyncio.to_thread(
+                                    image2bytes,
+                                    gt.img
+                                )
+                            )
                         )
                     )
                     return 0    # 答对0
@@ -211,13 +217,13 @@ async def guess_tofu(app: Ariadne, target: Group|Friend, level: RegexResult):
                     return 1    # 答错1
             elif answer in ['退出游戏', '结束游戏']:
                 return -1    # 退出-1
-            elif re.match(r'提示([1-9]?)', answer):
+            elif re.match(r'提示(\d{0,2})', answer):
                 # 降低难度
                 if len(answer) == 2:
                     gt.mask_rule_reduce2()
                     gt.masker()
                 else:
-                    for i in range(int(answer[2])):
+                    for i in range(int(answer[2:])):
                         gt.mask_rule_reduce2()
                         gt.masker()
                 await app.send_friend_message(
@@ -243,7 +249,13 @@ async def guess_tofu(app: Ariadne, target: Group|Friend, level: RegexResult):
                 MessageChain(
                     Plain('哼 哼 时间到了喵~↑\n'),
                     Plain('由于没有猜出答案，覌白获得了胜利喵~↑\n'),
-                    Plain(f'正确答案：{gt.tofu}')
+                    Plain(f'正确答案：【{gt.tofu}】'),
+                    Image(
+                        data_bytes= await asyncio.to_thread(
+                            image2bytes,
+                            gt.img
+                        )
+                    )
                 )
             )
             break
@@ -253,7 +265,13 @@ async def guess_tofu(app: Ariadne, target: Group|Friend, level: RegexResult):
                 MessageChain(
                     Plain('杂🐟 这么简单都猜不出来喵~↑\n'),
                     Plain('由于没有猜出答案，覌白获得了胜利喵~↑\n'),
-                    Plain(f'正确答案：{gt.tofu}')
+                    Plain(f'正确答案：【{gt.tofu}】'),
+                    Image(
+                        data_bytes= await asyncio.to_thread(
+                            image2bytes,
+                            gt.img
+                        )
+                    )
                 )
             )
             break

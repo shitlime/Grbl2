@@ -42,6 +42,9 @@ class GuessTofu():
         # 被遮挡的豆腐块图片
         self.img_masked = None
 
+        # 提示数
+        self.hint = 1
+
         # 等级选择
         if level==0:
             self.tofu = self.random_char(
@@ -49,29 +52,32 @@ class GuessTofu():
                     (0x4E00, 0x9FFF),  # 基本
                 ]
             )
-            self.rule = self.random_mask_rule(
+            self.rule = self.random_mask_rule2(
                 random.randint(1, 10),
                 random.randint(1, 10)
             )
         elif level==1:
-            self.rule = self.random_mask_rule(
+            self.rule = self.random_mask_rule2(
                 random.randint(1, 2),
                 random.randint(1, 2)
             )
         elif level==2:
-            self.rule = self.random_mask_rule(
+            self.rule = self.random_mask_rule2(
                 random.randint(3, 4),
-                random.randint(3, 4)
+                random.randint(3, 4),
+                0.6
             )
         elif level==3:
-            self.rule = self.random_mask_rule(
+            self.rule = self.random_mask_rule2(
                 random.randint(5, 6),
-                random.randint(5, 6)
+                random.randint(5, 6),
+                0.7
             )
         elif level==4:
-            self.rule = self.random_mask_rule(
+            self.rule = self.random_mask_rule2(
                 random.randint(6, 10),
-                random.randint(6, 10)
+                random.randint(6, 10),
+                0.8
             )
         elif level==5:
             self.rule = [
@@ -86,7 +92,10 @@ class GuessTofu():
                 [0, 1, 1, 1, 1, 1, 1, 1, 1, 0],    # 9
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],    # 10
             ]
-        pass
+        elif level==6:
+            self.rule = self.random_mask_rule2(
+                100, 100, 0.9
+            )
 
     def random_char(self, range_list: list[tuple[int]]):
         """
@@ -102,10 +111,22 @@ class GuessTofu():
 
     def random_mask_rule(self, x, y)->list[list]:
         """
-        获取大小为x * y的随机(0/1)二维数组
+        获取大小为 x * y 的随机(0/1) 二维数组
         """
         rule = [
             [ random.randint(0, 1) for i in range(x) ]
+            for j in range(y)
+        ]
+        rule[0][0] = 0
+        return rule
+
+    def random_mask_rule2(self, x, y, p=0.5)->list[list]:
+        """
+        获取大小为 x * y 的随机(0/1) 二维数组,有p的概率为1(p的范围[0,1])
+        """
+        random.seed()
+        rule = [
+            [ random.choices([0, 1], weights=[1-p, p])[0] for i in range(x) ]
             for j in range(y)
         ]
         rule[0][0] = 0
@@ -121,6 +142,8 @@ class GuessTofu():
     def mask_rule_reduce(self):
         """
         按顺序去除一个遮挡块
+
+        Returns: True成功 False失败
         """
         y = 0
         for r in self.rule:
@@ -128,9 +151,10 @@ class GuessTofu():
             for b in r:
                 if b == 1:
                     self.rule[y][x] = 0
-                    return
+                    return True
                 x += 1
             y += 1
+        return False
 
     def mask_rule_reduce2(self):
         """
