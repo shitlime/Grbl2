@@ -16,26 +16,30 @@ class GuessTofu():
     3. 减少遮挡
         调用后顺序减少(mask_rule_reduce)或随机减少(mask_rule_reduce2)遮挡块
     """
-    def __init__(self, level: int) -> str:
+    def __init__(self, level: int, char_range=[]) -> str:
         """
         初始化一局游戏
 
         level: 生成等级（遮挡的复杂度，不等于难度）
         """
         # 默认随机字符范围
-        self.tofu = self.random_char(
-            [
-                (0x3400, 0x4DBF),    # 扩A
-                (0x9FCD, 0x9FFF),    # 急用汉字
-                (0x20000, 0x2A6DF),  # 扩B
-                (0x2A700, 0x2B739),  # 扩C
-                (0x2B740,0x2B81D),   # 扩D
-                (0x2B820, 0x2CEAF),  # 扩E
-                (0x2CEB0, 0x2EBEF),  # 扩F
-                (0x30000, 0x3134A),  # 扩G
-                (0x31350, 0x323AF),  # 扩H
-            ]
-        )
+        cjk_a = (0x3400, 0x4DBF)    # 扩A
+        cjk_jy = (0x9FCD, 0x9FFF)   # 急用汉字
+        cjk_b = (0x20000, 0x2A6DF)  # 扩B
+        cjk_c = (0x2A700, 0x2B739)  # 扩C
+        cjk_d = (0x2B740, 0x2B81D)  # 扩D
+        cjk_e = (0x2B820, 0x2CEAF)  # 扩E
+        cjk_f = (0x2CEB0, 0x2EBEF)  # 扩F
+        cjk_g = (0x30000, 0x3134A)  # 扩G
+        cjk_h = (0x31350, 0x323AF)  # 扩H
+        if char_range:
+            self.tofu = self.random_char(char_range)
+        elif level == 0:
+            self.tofu = self.random_char([(0x4E00, 0x9FFF)])
+        else:
+            self.tofu = self.random_char(
+                [cjk_a, cjk_jy, cjk_b, cjk_c, cjk_d, cjk_e, cjk_f, cjk_g, cjk_h]
+            )
         # 豆腐块图片（原图）
         self.img = None
 
@@ -47,11 +51,6 @@ class GuessTofu():
 
         # 等级选择
         if level==0:
-            self.tofu = self.random_char(
-                [
-                    (0x4E00, 0x9FFF),  # 基本
-                ]
-            )
             self.rule = self.random_mask_rule2(
                 random.randint(1, 10),
                 random.randint(1, 10)
@@ -95,6 +94,10 @@ class GuessTofu():
         elif level==6:
             self.rule = self.random_mask_rule2(
                 100, 100, 0.9
+            )
+        elif level==7:
+            self.rule = self.random_mask_rule2(
+                100, 100, 0.99
             )
 
     def random_char(self, range_list: list[tuple[int]]):
@@ -186,7 +189,10 @@ class GuessTofu():
         column_count = len(self.rule[0])
         mask_block_width = math.ceil(w/column_count)
         mask_block_height = math.ceil(h/row_count)
-        mask_block = Image.new("RGB", (mask_block_width, mask_block_height), (0xff, 0x14, 0x93))
+        mask_block = Image.new("RGB", (mask_block_width, mask_block_height),
+                                (random.randint(0, 0xff), random.randint(0, 0xff),
+                                random.randint(0, 0xff)))
+                                # (0xff, 0x14, 0x93))
 
         # 使用遮挡块
         y = 0

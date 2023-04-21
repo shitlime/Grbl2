@@ -5,6 +5,7 @@ from bot_init import BOT
 from .char2image2 import char2image, fonts_loader, image2bytes
 from .guess_tofu_core import GuessTofu
 from ..base.get_quote_message import get_quote_message
+from ..base.check import check_single
 
 from graia.saya import Channel
 from graia.ariadne import Ariadne
@@ -71,6 +72,13 @@ fonts = {
 "P2" : "TH-Tshyn-P2.ttf",
 "P16" : "TH-Tshyn-P16.ttf"
 }
+
+# ===== 猜豆腐 =====
+# 单例限制
+playing = []
+# TODO
+# 计分板
+
 
 # 回复式豆腐块响应
 @channel.use(
@@ -160,17 +168,39 @@ async def break_tofu_cmd(app: Ariadne, target: Group|Friend, msg: MessageChain):
         inline_dispatchers=[
             Twilight(
                 UnionMatch(['猜豆腐', '豆腐块游戏']),
-                "level" << UnionMatch([str(i) for i in range(7) ])
+                "level" << UnionMatch([str(i) for i in range(8) ]),
+                "char_range" << RegexMatch(r"([0-9A-Fa-f]{1,8}-[0-9A-Fa-f]{1,8} ?)+", optional=True)
             )
-        ]
+        ],
+        decorators=[check_single(playing)]
     )
 )
-async def guess_tofu(app: Ariadne, target: Group|Friend, level: RegexResult):
-    # 根据等级生成猜豆腐实例
+async def guess_tofu(app: Ariadne, target: Group|Friend, level: RegexResult, char_range: RegexResult):
+    # 根据参数生成猜豆腐实例
     level = int(level.result.display)
-    gt = GuessTofu(level)
+    if char_range.matched:
+        char_range_list = []
+        # 切分每个范围
+        cr_list = str(char_range.result).split(' ')
+        for cr in cr_list:
+            # 切分开始、结束
+            cr = str(cr).split('-')
+            char_range_start = int(cr[0], 16)
+            char_range_end = int(cr[1], 16)
+        if (char_range_end >= char_range_start):
+            # 范围[start, end)
+            char_range_list.append((char_range_start, char_range_end))
+        else:
+            # 范围[end, start)
+            char_range_list.append((char_range_end, char_range_start))
+        gt = GuessTofu(level, char_range_list)
+    else:
+        gt = GuessTofu(level)
     gt.set_img(await get_tofu_img(gt.tofu, fd_cache))
     gt.masker()
+
+    # 记录发送的提示性消息
+    msg_list = []
 
     await app.send_message(
         target,
@@ -188,7 +218,7 @@ async def guess_tofu(app: Ariadne, target: Group|Friend, level: RegexResult):
     )
 
     async def waiter(waiter_target: Group|Friend , waiter_message: MessageChain):
-        if type(waiter_target) == type(target) and waiter_target.id == target.id:
+        if waiter_target == target:
             answer = waiter_message.display
             if len(answer) == 1:
                 if answer == gt.tofu:
@@ -207,17 +237,18 @@ async def guess_tofu(app: Ariadne, target: Group|Friend, level: RegexResult):
                     )
                     return 0    # 答对0
                 else:
-                    await app.send_message(
+                    msg = await app.send_message(
                         target,
                         MessageChain(
                             Plain('很遗憾 答错了喵~↓ '),
                             Plain('请继续猜喵~→')
                         )
                     )
+                    msg_list.append(msg)
                     return 1    # 答错1
-            elif answer in ['退出游戏', '结束游戏']:
+            elif answer in ['退出游戏', '结束游戏', '🏳️']:
                 return -1    # 退出-1
-            elif re.match(r'提示(\d{0,2})', answer):
+            elif re.match(r'提示(\d{0,2})$', answer):
                 # 降低难度
                 if len(answer) == 2:
                     gt.mask_rule_reduce2()
@@ -226,7 +257,7 @@ async def guess_tofu(app: Ariadne, target: Group|Friend, level: RegexResult):
                     for i in range(int(answer[2:])):
                         gt.mask_rule_reduce2()
                         gt.masker()
-                await app.send_friend_message(
+                msg = await app.send_message(
                     target,
                     MessageChain(
                         Plain('猜不出来吗？给你点提示喵~→'),
@@ -238,6 +269,7 @@ async def guess_tofu(app: Ariadne, target: Group|Friend, level: RegexResult):
                         )
                     )
                 )
+                msg_list.append(msg)
                 return 2    # 降低难度2
     
     answer = None
@@ -275,8 +307,16 @@ async def guess_tofu(app: Ariadne, target: Group|Friend, level: RegexResult):
                 )
             )
             break
+    # 撤回消息，减少对正常聊天的干扰
+    for msg in msg_list:
+        try:
+            await app.recall_message(msg)
+        except:
+            pass
+    # 删除猜豆腐对象
     del gt
-
+    # 解除单例
+    playing.remove(target)
 
 # 渲染豆腐块
 async def get_tofu_img(tofu: str, fd_cache: list):

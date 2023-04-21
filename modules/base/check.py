@@ -86,3 +86,18 @@ def check_group(groups: list[int]):  #指定响应的群
         if group.id not in groups:
             raise ExecutionStop
     return Depend(check_group_id)
+
+# ===== 限制对话单例 =====
+def check_single(log: list):
+    async def check_single_deco(app: Ariadne, target: Group | Friend):
+        if target in log:
+            # 如果已经有进行中的实例，则做出提示
+            await app.send_message(
+                target,
+                MessageChain("进行中…")
+            )
+            raise ExecutionStop
+        else:
+            # 如果没有进行中的实例，将本次验证的实例作为新实例
+            log.append(target)
+    return Depend(check_single_deco)
