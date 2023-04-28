@@ -1,4 +1,5 @@
 import re
+import random
 import asyncio
 
 from bot_init import BOT
@@ -82,7 +83,8 @@ scroes = {}
         decorators=[check_single(playing)]
     )
 )
-async def guess_tofu(app: Ariadne, target: Group|Friend, level: RegexResult, char_range: RegexResult):
+async def guess_tofu(app: Ariadne, target: Group|Friend,
+                     level: RegexResult, char_range: RegexResult):
     # 根据参数生成猜豆腐实例
     level = int(level.result.display)
     if char_range.matched:
@@ -172,7 +174,7 @@ async def guess_tofu(app: Ariadne, target: Group|Friend, level: RegexResult, cha
                     return 1    # 答错1
             elif answer in ['退出游戏', '结束游戏', '🏳️']:
                 return -1    # 退出-1
-            elif re.match(r'提示([1-9][0-9]?)$', answer):
+            elif re.match(r'提示([1-9][0-9]?)?$', answer):
                 # 降低难度
                 if len(answer) == 2:
                     gt.mask_rule_reduce2()
@@ -242,6 +244,215 @@ async def guess_tofu(app: Ariadne, target: Group|Friend, level: RegexResult, cha
     # 解除单例
     playing.remove(target)
 
+# 猜豆腐块游戏-竞赛
+@channel.use(
+    ListenerSchema(
+        listening_events=[GroupMessage],
+        inline_dispatchers=[
+            Twilight(
+                UnionMatch(['猜豆腐竞赛', '豆腐块游戏竞赛']),
+            )
+        ],
+        decorators=[check_single(playing)]
+    )
+)
+async def guess_tofu_competition(app: Ariadne, events: GroupMessage):
+    group = events.sender.group
+    member = events.sender
+    print(events)
+    print(app)
+    # 竞赛介绍（规则说明
+    await app.send_message(
+        group,
+        MessageChain(
+            Plain('【猜豆腐竞赛】\n'),
+            Plain('规则：1.在每一轮中发送图中的可能被遮挡的文字\n'),
+            Plain('2.得分按该轮的等级计算\n'),
+            Plain('3.超过一分钟未回应，该轮结束\n'),
+            Plain('4.提示或答错都会扣除分数\n'),
+            Plain('5.喵喵~喵喵喵喵喵喵喵喵！\n')
+        )
+    )
+    await asyncio.sleep(3)
+    # 循环（5次
+    rounds = 5
+    for i in range(rounds):
+        # 生成猜豆腐游戏（初始化
+        level = random.randint(0, GuessTofu.COMPETE_MAX_LEVEL)
+        s = (level + 1)*10    # 记分规则
+        gt = GuessTofu(level)
+        gt.set_img(await get_tofu_img(gt.tofu, fd_cache))
+        gt.masker()
+        # 游戏流程（猜豆腐过程
+        recovery_msg = []    # 回收消息
+        #   开始
+        await app.send_message(
+            group,
+            MessageChain(
+                Plain(f"【猜豆腐】-等级{level}\n"),
+                Plain(f"[第{i + 1}/{rounds}轮]\n"),
+                Plain(f"发送下图文字，得到{s}分"),
+                Image(
+                    data_bytes= await asyncio.to_thread(
+                        image2bytes,
+                        gt.img_masked
+                    )
+                )
+            )
+        )
+
+        #   等待器（游戏流程）
+        async def waiter(waiter_events: GroupMessage):
+            # 获取信息
+            waiter_target = waiter_events.sender.group
+            player = waiter_events.sender
+            # 判断消息来源是否本游戏的群组
+            if waiter_target == group:
+                answer = waiter_events.message_chain.display
+                if answer in ['退出游戏', '结束游戏', '🏳️']:
+                    # 退出
+                    await app.send_message(
+                        group,
+                        MessageChain(
+                            Plain('杂🐟'),
+                            At(player.id),
+                            Plain(' 这么简单都猜不出来喵~↑\n'),
+                            Plain('由于没有猜出答案，覌白获得了胜利喵~↑\n'),
+                            Plain(f'正确答案：【{gt.tofu}】'),
+                            Image(
+                                data_bytes= await asyncio.to_thread(
+                                    image2bytes,
+                                    gt.img
+                                )
+                            )
+                        )
+                    )
+                    return -1    # 退出-1
+                elif len(answer) == 1:
+                    if answer == gt.tofu:
+                        # 答对
+                        await app.send_message(
+                            group,
+                            MessageChain(
+                                At(player.id),
+                                Plain(f" 恭喜 答对了喵~↑\n"),
+                                Plain(f'正确答案：【{gt.tofu}】'),
+                                Image(
+                                    data_bytes= await asyncio.to_thread(
+                                        image2bytes,
+                                        gt.img
+                                    )
+                                )
+                            )
+                        )
+                        # 胜利记分
+                        origin_scroe = scroes.get(player.id)
+                        if origin_scroe:
+                            # 非空
+                            scroes[player.id] = origin_scroe + s
+                        else:
+                            # 空
+                            scroes[player.id] = s
+                        return 0    # 答对0
+                    else:
+                        # 答错
+                        flag = random.choice([True, False])
+                        msg = await app.send_message(
+                            group,
+                            MessageChain(
+                                At(player.id),
+                                Plain(f" 很遗憾 不是这个喵~↓"),
+                                Plain(f"{'扣分喵~!' if flag else ''}"),
+                                Plain("请继续喵~→")
+                            )
+                        )
+                        recovery_msg.append(msg)
+                        # 答错扣分
+                        if flag:
+                            origin_scroe = scroes.get(player.id)
+                            if origin_scroe:
+                                scroes[player.id] = origin_scroe - 1
+                            else:
+                                scroes[player.id] = -1
+                        return 1    # 答错1
+                elif re.match(r'提示([1-9][0-9]?)?$', answer):
+                    # 提示
+                    hint_count = 0
+                    if len(answer) == 2:
+                        gt.mask_rule_reduce2()
+                        gt.masker()
+                        hint_count += 1
+                    else:
+                        for j in range(int(answer[2:])):
+                            gt.mask_rule_reduce2()
+                            gt.masker()
+                            hint_count += 1
+                    msg = await app.send_message(
+                        group,
+                        MessageChain(
+                            Plain('猜不出来吗？给你点提示喵~→'),
+                            Image(
+                                data_bytes= await asyncio.to_thread(
+                                    image2bytes,
+                                    gt.img_masked
+                                )
+                            )
+                        )
+                    )
+                    recovery_msg.append(msg)
+                    # 提示扣分
+                    origin_scroe = scroes.get(player.id)
+                    if origin_scroe:
+                        scroes[player.id] = origin_scroe - (2 * hint_count)
+                    else:
+                        scroes[player.id] = -(2 * hint_count)
+                    return 2    # 降低难度2
+        answer = None
+        while answer not in [0, -1]:
+            # 如果是提示/答错，则继续游戏
+            answer = await FunctionWaiter(waiter, [GroupMessage]).wait(timeout=60)
+            if answer is None:
+                # 超时
+                await app.send_message(
+                    group,
+                    MessageChain(
+                        Plain('哼 哼 时间到了喵~↑\n'),
+                        Plain('由于没有猜出答案，覌白获得了胜利喵~↑\n'),
+                        Plain(f'正确答案：【{gt.tofu}】'),
+                        Image(
+                            data_bytes= await asyncio.to_thread(
+                                image2bytes,
+                                gt.img
+                            )
+                        )
+                    )
+                )
+                break
+        # 一轮结束（重置一些变量，延时5秒撤回多余的消息
+        if i < (rounds - 1):
+            msg = await app.send_message(group, MessageChain("即将开始下一轮……"))
+            recovery_msg.append(msg)
+            await asyncio.sleep(4)
+        del gt
+        del answer
+        for msg in recovery_msg:
+            try:
+                await app.recall_message(msg)
+            except:
+                pass
+    # 竞赛结束，输出得分排行榜（循环结束，解除单例
+    result = ""
+    for p, s in scroes.items():
+        p = await app.get_member(group, p)
+        result += f"{p.name} : {s}分\n"
+    await app.send_message(
+        group,
+        MessageChain(
+            Plain("【竞赛结束】\n"),
+            Plain(result)
+        )
+    )
+    playing.remove(group)
 
 
 # 渲染豆腐块

@@ -16,6 +16,8 @@ class GuessTofu():
     3. 减少遮挡
         调用后顺序减少(mask_rule_reduce)或随机减少(mask_rule_reduce2)遮挡块
     """
+    COMPETE_MAX_LEVEL = 5
+
     def __init__(self, level: int, char_range=[]) -> str:
         """
         初始化一局游戏
