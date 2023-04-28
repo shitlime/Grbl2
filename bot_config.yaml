@@ -36,6 +36,7 @@ modules:
   - "modules.GroupEventAction.InfosChange"
   - "modules.Admin.recall_message"
   - "modules.SixtySecNews.SixtySecNews"
+  - "modules.BreakTofu.guess_tofu"
 
 modules_config:
   search_char:
@@ -49,6 +50,9 @@ modules_config:
     font_path_linux: "目录/字体/loli.ttf"
     cool_down_time: 10
   break_tofu:
+    font_path_windows: "目录\\TH-Tshyn\\"
+    font_path_linux: "目录/TH-Tshyn/"
+  guess_tofu:
     font_path_windows: "目录\\TH-Tshyn\\"
     font_path_linux: "目录/TH-Tshyn/"
   AI_drawing:
