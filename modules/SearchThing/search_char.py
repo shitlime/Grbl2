@@ -42,12 +42,14 @@ config = BOT.get_modules_config('search_char')
 #查找参数：
 search_mode_list = ["g", "G", "观", "观星三拼",
 "s", "S", "四", "四角", "四角号码",
+"f", "飞", "飞梧",
 "u", "U"]
 #查字数据库配置：
 #码表型
 #名称：
 dict_g_name = "tri_py_gxsp.dict-b2.yaml"
 dict_s_name = "sjhm.dict-b1.yaml"
+dict_f_name = "jbjcf.txt"
 
 #共用路径(根据系统设置不同路径)：
 if BOT.sys == 'Windows':
@@ -93,6 +95,13 @@ async def search_char(app: Ariadne, target: Group | Friend, search_mode: RegexRe
             Plain(f"【{search_char}】{getpinyin(search_char)}{re_msg_u}\n"),
             Plain(f"[四角号码]{find_char(dict_s, search_char)}")
         )
+    # 飞梧2023-04-25
+    elif search_mode in ["f", "飞", "飞梧"]:
+        if len(search_char) == 1:
+            re_msg = MessageChain(
+                Plain(f"【{search_char}】{getpinyin(search_char)} {hex(ord(search_char))}\n"),
+                Plain(f"[飞梧-基本集拆分]{find_char(dict_f, search_char)}")
+            )
     #以字查U码：
     elif search_mode in ["u"]:
         char_list = []
@@ -177,6 +186,7 @@ def find_char(dt: dict, ch: str):
 #码表型字典数据装载：
 dict_g = load_dict(dict_path, dict_g_name)#观星三拼
 dict_s = load_dict(dict_path, dict_s_name)#四角号码
+dict_f = load_dict(dict_path, dict_f_name)#基本集拆分
 
 # = = = = = 新函数开始 = = = = =
 def unicodeInfo(c: str):
