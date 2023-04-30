@@ -16,7 +16,7 @@ class GuessTofu():
     3. 减少遮挡
         调用后顺序减少(mask_rule_reduce)或随机减少(mask_rule_reduce2)遮挡块
     """
-    COMPETE_MAX_LEVEL = 5
+    COMPETE_MAX_LEVEL = 6
 
     def __init__(self, level: int, char_range=[]) -> str:
         """
@@ -24,6 +24,7 @@ class GuessTofu():
 
         level: 生成等级（遮挡的复杂度，不等于难度）
         """
+        self.level = level
         # 默认随机字符范围
         cjk_a = (0x3400, 0x4DBF)    # 扩A
         cjk_jy = (0x9FCD, 0x9FFF)   # 急用汉字
@@ -48,9 +49,14 @@ class GuessTofu():
         # 被遮挡的豆腐块图片
         self.img_masked = None
 
-        # 提示数
-        self.hint = 1
-
+        # 总分数
+        self.score = 0
+        
+        # 遮挡数
+        self.maskCount = 0
+        # 理论最大遮挡
+        self.maxCount = 0
+        
         # 等级选择
         if level==0:
             self.rule = self.random_mask_rule2(
@@ -93,6 +99,12 @@ class GuessTofu():
                 [0, 1, 1, 1, 1, 1, 1, 1, 1, 0],    # 9
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],    # 10
             ]
+            self.maxCount = 100
+            sum = 0
+            for l in self.rule:
+                sum += l.count(1)
+            self.maskCount = sum
+            self.score = int((self.maskCount / self.maxCount) * ((self.level + 1) * 10)) + 1
         elif level==6:
             self.rule = self.random_mask_rule2(
                 100, 100, 0.9
@@ -123,6 +135,13 @@ class GuessTofu():
             for j in range(y)
         ]
         rule[0][0] = 0
+        # 计算总分
+        sum = 0
+        for l in rule:
+            sum += l.count(1)
+        self.maskCount = sum
+        self.maxCount = x*y
+        self.score = int((self.maskCount / self.maxCount) * ((self.level + 1) * 10)) + 1
         return rule
 
     def random_mask_rule2(self, x, y, p=0.5)->list[list]:
@@ -135,6 +154,14 @@ class GuessTofu():
             for j in range(y)
         ]
         rule[0][0] = 0
+        # 计算总分
+        sum = 0
+        for l in rule:
+            sum += l.count(1)
+        self.maskCount = sum
+        print(self.maskCount)
+        self.maxCount = x*y
+        self.score = int((self.maskCount / self.maxCount) * ((self.level + 1) * 10)) + 1
         return rule
 
     def set_img(self, img):
@@ -176,6 +203,9 @@ class GuessTofu():
             except:
                 rnum += 1
         self.mask_rule_reduce()
+        if self.maskCount > 0:
+            self.maskCount -= 1
+        self.score = int((self.maskCount / self.maxCount) * ((self.level + 1) * 10)) + 1
         return
 
     def masker(self):

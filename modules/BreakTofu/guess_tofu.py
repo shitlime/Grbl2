@@ -279,7 +279,6 @@ async def guess_tofu_competition(app: Ariadne, events: GroupMessage):
     for i in range(rounds):
         # 生成猜豆腐游戏（初始化
         level = random.randint(0, GuessTofu.COMPETE_MAX_LEVEL)
-        s = (level + 1)*10    # 记分规则
         gt = GuessTofu(level)
         gt.set_img(await get_tofu_img(gt.tofu, fd_cache))
         gt.masker()
@@ -291,7 +290,7 @@ async def guess_tofu_competition(app: Ariadne, events: GroupMessage):
             MessageChain(
                 Plain(f"【猜豆腐】-等级{level}\n"),
                 Plain(f"[第{i + 1}/{rounds}轮]\n"),
-                Plain(f"发送下图文字，得到{s}分"),
+                Plain(f"发送下图文字，得到{gt.score}分"),
                 Image(
                     data_bytes= await asyncio.to_thread(
                         image2bytes,
@@ -349,10 +348,10 @@ async def guess_tofu_competition(app: Ariadne, events: GroupMessage):
                         origin_scroe = scroes.get(player.id)
                         if origin_scroe:
                             # 非空
-                            scroes[player.id] = origin_scroe + s
+                            scroes[player.id] = origin_scroe + gt.score
                         else:
                             # 空
-                            scroes[player.id] = s
+                            scroes[player.id] = gt.score
                         return 0    # 答对0
                     else:
                         # 答错
@@ -396,16 +395,12 @@ async def guess_tofu_competition(app: Ariadne, events: GroupMessage):
                                     image2bytes,
                                     gt.img_masked
                                 )
-                            )
+                            ),
+                            Plain(f'本轮剩余分数：{gt.score}')
                         )
                     )
                     recovery_msg.append(msg)
-                    # 提示扣分
-                    origin_scroe = scroes.get(player.id)
-                    if origin_scroe:
-                        scroes[player.id] = origin_scroe - (2 * hint_count)
-                    else:
-                        scroes[player.id] = -(2 * hint_count)
+                    # 提示扣题目分
                     return 2    # 降低难度2
         answer = None
         while answer not in [0, -1]:
@@ -452,6 +447,8 @@ async def guess_tofu_competition(app: Ariadne, events: GroupMessage):
             Plain(result)
         )
     )
+    # 清除记分
+    scroes.clear()
     playing.remove(group)
 
 
