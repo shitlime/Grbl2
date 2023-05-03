@@ -100,7 +100,7 @@ async def search_char(app: Ariadne, target: Group | Friend, search_mode: RegexRe
         if len(search_char) == 1:
             re_msg = MessageChain(
                 Plain(f"【{search_char}】{getpinyin(search_char)} {hex(ord(search_char))}\n"),
-                Plain(f"[飞梧-基本集拆分]{find_char(dict_f, search_char)}")
+                Plain(f"[飞梧-拆字]{find_char(dict_f, search_char)}")
             )
     #以字查U码：
     elif search_mode in ["u"]:
