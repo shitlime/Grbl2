@@ -1,5 +1,6 @@
+.gitignore
 *.py[cod]
 *.pyc
 grbl_config.yaml
-.gitignore
 __pycache__
+.vscode
