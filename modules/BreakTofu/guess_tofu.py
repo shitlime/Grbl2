@@ -58,7 +58,8 @@ fonts = {
 "P0" : "TH-Tshyn-P0.ttf",
 "P1" : "TH-Tshyn-P1.ttf",
 "P2" : "TH-Tshyn-P2.ttf",
-"P16" : "TH-Tshyn-P16.ttf"
+"P16" : "TH-Tshyn-P16.ttf",
+"extend I" : "扩展B-I Regular.ttf"
 }
 
 # 单例限制

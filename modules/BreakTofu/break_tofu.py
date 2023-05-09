@@ -61,12 +61,14 @@ elif BOT.sys == 'Linux':
 fonts = {
 # format:
 # "info" : "font"
+# 按优先度排序
 
 "ttc" : "TH-Times.ttc",
 "P0" : "TH-Tshyn-P0.ttf",
 "P1" : "TH-Tshyn-P1.ttf",
 "P2" : "TH-Tshyn-P2.ttf",
-"P16" : "TH-Tshyn-P16.ttf"
+"P16" : "TH-Tshyn-P16.ttf",
+"extend I" : "扩展B-I Regular.ttf"
 }
 
 # 回复式豆腐块响应
@@ -127,7 +129,9 @@ async def break_tofu(app: Ariadne, group: Group, source: Source):
     )
 )
 async def break_tofu_cmd(app: Ariadne, target: Group|Friend, msg: MessageChain):
-    tofu = re.search(r'^豆腐块 ?(.+)', msg.display, flags=re.DOTALL)
+    # 解决反斜杠接收不了的bug
+    tofu = re.search(rf'^(?:{"|".join(keyWord)}) ?(.+)', msg.display, flags=re.DOTALL)
+    
     # 如果豆腐块指令格式正确
     if tofu:
         tofu = tofu.groups()[0]    # 取出豆腐文本

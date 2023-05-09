@@ -4,7 +4,6 @@ import math
 from PIL import Image, ImageFont, ImageDraw, ImageShow
 from fontTools.ttLib import TTFont, TTCollection
 
-# from guess_tofu_core import GuessTofu
 
 def char2image(
     string: str,
@@ -118,10 +117,13 @@ def font_selector(char, fonts_dict):
     """
     for fd in fonts_dict:
         if ord(char) in fd[0]:
+            # If font contains this char, use it.
             return fd[1]
+    # Default:
     return fonts_dict[0][1]
 
 def idealize_text(text: str) -> str:
+    # 对文本排版
     """
     text: origin text
 
@@ -142,23 +144,17 @@ def idealize_text(text: str) -> str:
 
 if __name__ == '__main__':
     fonts = {
+        # 按优先级排序
         "ttc" : "TH-Times.ttc",
         "P0" : "TH-Tshyn-P0.ttf",
         "P1" : "TH-Tshyn-P1.ttf",
         "P2" : "TH-Tshyn-P2.ttf",
-        "P16" : "TH-Tshyn-P16.ttf"
+        "P16" : "TH-Tshyn-P16.ttf",
+        "extend I" : "扩展B-I Regular.ttf"
     }
     fpath = input('fpath=')
     string = input('text:\n')
     fd = fonts_loader(fonts, fpath, 60)
     img = char2image(string, fd, offset=(10, 10, 10))
-    #img.show()
-    # ------------------
-    # GuessTofu
-    gt = GuessTofu(2)
-    gt.set_img(img)
-    print(gt.rule)
-    gt.masker()
-    gt.img.show()
-    gt.img_masked.show()
-    # ------------------
+    img.show()
+    

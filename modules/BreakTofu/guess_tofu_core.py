@@ -35,13 +35,14 @@ class GuessTofu():
         cjk_f = (0x2CEB0, 0x2EBEF)  # 扩F
         cjk_g = (0x30000, 0x3134A)  # 扩G
         cjk_h = (0x31350, 0x323AF)  # 扩H
+        cjk_i = (0x2EBF0, 0x2EE4A)  # 扩I
         if char_range:
             self.tofu = self.random_char(char_range)
         elif level == 0:
             self.tofu = self.random_char([(0x4E00, 0x9FFF)])
         else:
             self.tofu = self.random_char(
-                [cjk_a, cjk_jy, cjk_b, cjk_c, cjk_d, cjk_e, cjk_f, cjk_g, cjk_h]
+                [cjk_a, cjk_jy, cjk_b, cjk_c, cjk_d, cjk_e, cjk_f, cjk_g, cjk_h, cjk_i]
             )
         # 豆腐块图片（原图）
         self.img = None
