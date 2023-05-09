@@ -190,22 +190,27 @@ def readtxt(path: str, name: str, mode: str ='rb'):#读取文本文件
     f.close()
     return s
 
-def dict_change(dt_s: str):#字典处理
-    d1 = dt_s.split('\n')
-    d2 = {}
-    while '' in d1:
-        d1.remove('')
-    for d11 in d1:
-        if d11[0] == '#':
+def dict_change(dict_str: str):#字典处理
+    dict_str = dict_str.replace('\r\n', '\n').replace('\r', '\n')
+    lines = dict_str.split('\n')
+    result = {}
+    # 逐一取出行(l)，进行处理
+    for l in lines:
+        # “#”开头表示注释的行、len(l)=0空的行，都忽略
+        if (len(l) == 0) or (l[0] == '#'):
             continue
-        d11 = d11.split('\t')
-        if len(d11) == 1:
+        # 切分行(l)，之后l[0]是字，l[1]是码
+        l = l.split('\t')
+        if len(l) < 2:
+            # 如果不存在制表符，跳过本行
             continue
-        if d11[0] in d2:
-            d2[d11[0]].append(d11[1])
-            continue
-        d2[d11[0]] = [d11[1]]
-    return d2
+        if l[0] in result:
+            # 如果字已经存在，添加新的码
+            result[l[0]].append(l[1])
+        else:
+            # 如果字不存在，添加字和码
+            result[l[0]] = [l[1]]
+    return result
 
 def load_dict(dict_path: str, dict_name: str):
     print("装载字典……")
