@@ -6,6 +6,7 @@ from pypinyin import pinyin
 from datetime import datetime
 
 from bot_init import BOT
+from ..BreakTofu.break_tofu import break_tofu_cmd
 
 from graia.saya import Channel
 from graia.ariadne import Ariadne
@@ -20,6 +21,7 @@ from graia.ariadne.message.parser.twilight import(
     UnionMatch,
     ParamMatch,
     SpacePolicy,
+    WildcardMatch,
     RegexResult
 )
 
@@ -43,13 +45,15 @@ config = BOT.get_modules_config('search_char')
 search_mode_list = ["g", "G", "观", "观星三拼",
 "s", "S", "四", "四角", "四角号码",
 "f", "飞", "飞梧",
+"n", "凝",
 "u", "U"]
 #查字数据库配置：
 #码表型
 #名称：
-dict_g_name = "tri_py_gxsp.dict-b2.yaml"
+dict_g_name = "tri_py_gxsp.dict-b3.yaml"
 dict_s_name = "sjhm.dict-b1.yaml"
 dict_f_name = "jbjcf.txt"
+dict_n_name = "ning.txt"
 
 #共用路径(根据系统设置不同路径)：
 if BOT.sys == 'Windows':
@@ -67,16 +71,27 @@ elif BOT.sys == 'Linux':
             Twilight(
                 UnionMatch(["?", "？", "#"]).space(SpacePolicy.PRESERVE),
                 "search_mode" << UnionMatch(search_mode_list).space(SpacePolicy.FORCE),
-                "search_char" << ParamMatch()
+                WildcardMatch()
             )
         ]
     )
 )
-async def search_char(app: Ariadne, target: Group | Friend, search_mode: RegexResult, search_char: RegexResult):
-    #print(f"sm：{search_mode.},sc:{search_char}")
+async def search_char_info(app: Ariadne, target: Group | Friend,
+                      search_mode: RegexResult, msg: MessageChain):
+    # 提取消息中的数据
     search_mode = search_mode.result.display
-    search_char = search_char.result.display
+    search_char = msg.display.split(search_mode + " ")[1]
+    # 提取管道的数据
+    U_pipeline = None
+    if search_mode == "U":
+        U_pipeline = re.search(rf" \| ({'|'.join(search_mode_list)})", search_char)
+        next_search_mode = U_pipeline.groups()[0] if U_pipeline else None
+    tofu_pipeline = re.search(" \| (豆腐块|豆腐塊)", search_char)
+
+    # 查找的字符
+    search_char = search_char.split(" | ")[0]
     re_msg = None
+    print(f"sm:{search_mode}, sc:{search_char}")
     #查观星三拼
     if search_mode in ["g", "G", "观", "观星三拼"]:
         re_msg_u = ""
@@ -101,6 +116,13 @@ async def search_char(app: Ariadne, target: Group | Friend, search_mode: RegexRe
             re_msg = MessageChain(
                 Plain(f"【{search_char}】{getpinyin(search_char)} {hex(ord(search_char))}\n"),
                 Plain(f"[飞梧-拆字]{find_char(dict_f, search_char)}")
+            )
+    # 啊凝
+    elif search_mode in ["n", "凝"]:
+        if len(search_char) == 1:
+            re_msg = MessageChain(
+                Plain(f"【{search_char}】{getpinyin(search_char)} {hex(ord(search_char))}\n"),
+                Plain(f"[凝制作中]{find_char(dict_n, search_char)}")
             )
     #以字查U码：
     elif search_mode in ["u"]:
@@ -143,6 +165,21 @@ async def search_char(app: Ariadne, target: Group | Friend, search_mode: RegexRe
         )
     #发送信息：
     if re_msg != None:
+        # 若存在管道指令
+        if U_pipeline:
+            await search_char_info(app, target,
+                                   search_mode=RegexResult(
+                                       True, None, MessageChain(
+                                           next_search_mode)
+                                   ),
+                                   msg=MessageChain(
+                                       next_search_mode, " ", re_msg_c, " | 豆腐块" if tofu_pipeline else ''
+                                   ))
+            return
+        if tofu_pipeline:
+            await break_tofu_cmd(app, target, "豆腐块" + re_msg)
+            return
+        # 默认直接发送
         await app.send_message(target, re_msg)
 
 #查找字符信息：
@@ -186,7 +223,8 @@ def find_char(dt: dict, ch: str):
 #码表型字典数据装载：
 dict_g = load_dict(dict_path, dict_g_name)#观星三拼
 dict_s = load_dict(dict_path, dict_s_name)#四角号码
-dict_f = load_dict(dict_path, dict_f_name)#基本集拆分
+dict_f = load_dict(dict_path, dict_f_name)#飞梧
+dict_n = load_dict(dict_path, dict_n_name)#凝
 
 # = = = = = 新函数开始 = = = = =
 def unicodeInfo(c: str):
@@ -196,8 +234,8 @@ def getpinyin(s: str):
     p = pinyin(s, heteronym=True, errors='ignore')
     p_list = []
     for p1 in p:
-        p_list.append(p1[0])
-    return ' '.join(p_list)
+        p_list.append(' '.join(p1))
+    return ', '.join(p_list)
 
 # = = = = = 新函数结束 = = = = =
 
