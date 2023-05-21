@@ -233,7 +233,8 @@ dict_n = load_dict(dict_path, dict_n_name)#凝
 
 # = = = = = 新函数开始 = = = = =
 def unicodeInfo(c: str):
-    return unicodedata.name(c, '未找到')
+    result = unicodedata.name(c, False)
+    return result if result else ToUnicode(str)
 
 def getpinyin(s: str):
     p = pinyin(s, heteronym=True, errors='ignore')
