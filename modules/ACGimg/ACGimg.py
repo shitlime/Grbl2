@@ -79,4 +79,4 @@ async def acg_img(app: Ariadne, group: Group, member: Member):
             )
         )
         asyncio.sleep(cool_down_time)
-        app.recall_message(msg1)
+        await app.recall_message(msg1)
