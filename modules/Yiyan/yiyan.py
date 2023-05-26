@@ -36,7 +36,7 @@ saya.require("modules.yiyan")
 #好友发送消息
 get_f = ["|yy", "一言"]
 #群里提到、@机器人
-get_g = ["一言", "yiyan", "来点废话", "来点骚话"]
+get_g = ["一言", "yiyan"]
 
 # =====高级选项=====
 # 句子类型  -类型|st
@@ -74,7 +74,7 @@ yiyan_type = {'动画': 'a', '漫画': 'b', '游戏': 'c', '文学': 'd',
         ]
     )
 )
-async def yiyan_group(app: Ariadne, target: Group | Friend, yiyan_type_cn: RegexResult, full_info: RegexResult, show_help: RegexResult):
+async def yiyan(app: Ariadne, target: Group | Friend, yiyan_type_cn: RegexResult, full_info: RegexResult, show_help: RegexResult):
     # deal with arguments
     #print(yiyan_type_cn)
     #print(type(yiyan_type_cn))
