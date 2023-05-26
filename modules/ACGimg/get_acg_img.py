@@ -36,6 +36,6 @@ if __name__ == '__main__':
     img = loop.run_until_complete(get_acg_img())
     if type(img) == bytes:
         img = base64.b64decode(img)
-        Path('C:\\Users\\17531\\Desktop\\6395c86d-093c-975e-db2d-b8401522f710.jpg').write_bytes(img)
+        Path('debug_temp.jpg').write_bytes(img)
     else:
-        print('网络出错了')
+        print(f'网络出错了: {img}')
