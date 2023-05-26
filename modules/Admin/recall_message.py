@@ -14,7 +14,8 @@ from graia.ariadne.message.parser.twilight import(
     Twilight,
     UnionMatch,
     RegexMatch,
-    RegexResult
+    RegexResult,
+    SpacePolicy
 )
 
 channel = Channel.current()
@@ -34,8 +35,8 @@ key_word = ["remsg", "recall message", "撤回"]
         inline_dispatchers=[
             Twilight(
                 UnionMatch(BOT.cmd_prefix),
-                UnionMatch(key_word),
-                "num" << RegexMatch(r" [1-9]", optional=True)
+                UnionMatch(key_word).space(SpacePolicy.FORCE),
+                "num" << RegexMatch(r"[1-9]|[1-3][0-9]", optional=True)
             )
         ]
     )
