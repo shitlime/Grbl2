@@ -30,7 +30,7 @@ modules:
   - "modules.SearchThing.web_search"
   - "modules.SeTu.SeTu"
   - "modules.BreakTofu.break_tofu"
-  - "modules.AIDrawing.AI_drawing"
+  # - "modules.AIDrawing.AI_drawing"
   - "modules.ACGimg.ACGimg"
   - "modules.GroupEventAction.MemberJoinLeave"
   - "modules.GroupEventAction.InfosChange"
