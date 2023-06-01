@@ -30,7 +30,6 @@ class MessageQueue:
 
     async def send_message(self, app: Ariadne, target, message, *, quote = False,):
         # 将待发送的消息添加到队列中
-        print("-----put-----------")
         await self.queue.put((app, target, message, quote,))
     
     # 如果可能，修改昵称

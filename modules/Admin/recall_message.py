@@ -65,7 +65,7 @@ async def recall_message(app: Ariadne, group: Group, source: Source, num: RegexR
                         await app.recall_message(msg)
                     else:
                         print("Bot无管理员权限，撤回失败")
-                        await MessageQueue().send_message(group, MessageChain("消息超过2分钟且无权限撤回"))
+                        await MessageQueue().send_message(app, group, MessageChain("消息超过2分钟且无权限撤回"))
                         return
                 print(f"尝试撤回msg{msg}")
                 await app.recall_message(msg)
@@ -75,6 +75,7 @@ async def recall_message(app: Ariadne, group: Group, source: Source, num: RegexR
             msg = await app.get_message_from_id(search_msg_id, target=group)
     except:
         await MessageQueue().send_message(
+            app,
             group,
             MessageChain("指令执行未完成，可能有错误")
         )

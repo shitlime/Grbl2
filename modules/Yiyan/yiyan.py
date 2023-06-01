@@ -2,6 +2,7 @@ from datetime import datetime
 
 from modules.base.message_queue import MessageQueue
 
+from bot_init import BOT
 from .get_yiyan import get_yiyan, get_page_url
 
 from graia.saya import Channel
@@ -51,7 +52,7 @@ yiyan_type = {'动画': 'a', '漫画': 'b', '游戏': 'c', '文学': 'd',
 @channel.use(
     ListenerSchema(
         listening_events=[GroupMessage],
-        decorators=[MentionMe()],
+        decorators=[MentionMe(BOT.info['name'])],
         inline_dispatchers=[
             Twilight(
                 WildcardMatch(),
@@ -137,6 +138,7 @@ async def yiyan(app: Ariadne, target: Group | Friend, yiyan_type_cn: RegexResult
             )
         )
         await MessageQueue().send_message(
+            app,
             target,
             MessageChain(
                 Forward(fwd_node_list)
@@ -145,6 +147,7 @@ async def yiyan(app: Ariadne, target: Group | Friend, yiyan_type_cn: RegexResult
     #send help
     elif show_help:
         await MessageQueue().send_message(
+            app,
             target,
             MessageChain(
                 Plain("指令格式：\n"),
@@ -154,6 +157,7 @@ async def yiyan(app: Ariadne, target: Group | Friend, yiyan_type_cn: RegexResult
     # default: send yiyan
     else:
         await MessageQueue().send_message(
+            app,
             target,
             MessageChain(
                 Plain(f"{yiyan_text}\n\t——{from_who} {from_where}")

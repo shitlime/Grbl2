@@ -96,6 +96,7 @@ async def send_news_img_admin(app: Ariadne, target: Friend | Group):
     news_img = await get_news_img()
     if type(news_img) == int:
         await MessageQueue().send_message(
+            app,
             target,
             MessageChain(
                 Plain(f"err-or发生{news_img}")
@@ -103,6 +104,7 @@ async def send_news_img_admin(app: Ariadne, target: Friend | Group):
         )
     else:
         await MessageQueue().send_message(
+            app,
             target,
             MessageChain(
                 Image(base64=news_img),

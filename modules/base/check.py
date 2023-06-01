@@ -28,6 +28,7 @@ def cool_down(prev_time: datetime, second: int):
             return
         elif get_delay(prev_time) < second:
             await MessageQueue().send_message(
+                app,
                 target,
                 MessageChain(
                     Plain("指令冷却中")
@@ -58,6 +59,7 @@ def check_frequency(fqc_dict: dict, max_frequency: int):
             return
         elif fqc < max_frequency:    # 违反频率的请求
             await MessageQueue().send_message(
+                app,
                 group,
                 MessageChain(
                     At(member.id),
@@ -95,6 +97,7 @@ def check_single(log: list):
         if target in log:
             # 如果已经有进行中的实例，则做出提示
             await MessageQueue().send_message(
+                app,
                 target,
                 MessageChain("进行中…")
             )

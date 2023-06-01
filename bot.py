@@ -37,20 +37,26 @@ async def friend_message_listener(app: Ariadne, friend: Friend, message: Message
         MessageChain([Plain("Hello, World!")])
         )
 
-@app.broadcast.receiver("GroupMessage", decorators=[MentionMe()])
+@app.broadcast.receiver("GroupMessage", decorators=[MentionMe(BOT.info['name'])])
 async def group_message_listener(app: Ariadne, group: Group, member: Member, message: MessageChain):
     message = message.display
     if "妈妈是谁" in message:
-        await MessageQueue().send_message(group,
-        MessageChain([Plain(BOT.info['author_info'])])
+        await MessageQueue().send_message(
+            app,
+            group,
+            MessageChain([Plain(BOT.info['author_info'])])
         )
     elif "爸爸是谁" in message or "主人是谁" in message:
-        await MessageQueue().send_message(group,
-        MessageChain([Plain("不知道哦")])
+        await MessageQueue().send_message(
+            app,
+            group,
+            MessageChain([Plain("不知道哦")])
         )
     elif "在吗" in message:
-        await MessageQueue().send_message(group,
-        MessageChain([Plain("不在哦")])
+        await MessageQueue().send_message(
+            app,
+            group,
+            MessageChain([Plain("不在哦")])
         )
 
 # 挂载消息中转

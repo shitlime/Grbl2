@@ -181,7 +181,7 @@ async def search_char_info(app: Ariadne, target: Group | Friend,
             await break_tofu_cmd(app, target, "豆腐块" + re_msg)
             return
         # 默认直接发送
-        await MessageQueue().send_message(target, re_msg)
+        await MessageQueue().send_message(app, target, re_msg)
 
 #查找字符信息：
 #以下为查字模块部分

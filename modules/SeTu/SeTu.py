@@ -33,12 +33,13 @@ cool_down_time = config['cool_down_time']
 @channel.use(
     ListenerSchema(
         listening_events=[GroupMessage],
-        decorators=[MentionMe(), ContainKeyword("涩图")],
+        decorators=[MentionMe(BOT.info['name']), ContainKeyword("涩图")],
         inline_dispatchers=[CoolDown(cool_down_time)]
     )
 )
 async def SeTu(app: Ariadne, group: Group):
     await MessageQueue().send_message(
+        app,
         group,
         MessageChain(Image(data_bytes= await asyncio.to_thread(create_setu)))
     )

@@ -74,7 +74,7 @@ print('装载完成！')
 @channel.use(
     ListenerSchema(
         listening_events=[GroupMessage],
-        decorators=[check_frequency(fqc_dict, fqc_time), MentionMe()],
+        decorators=[check_frequency(fqc_dict, fqc_time), MentionMe(BOT.info['name'])],
         inline_dispatchers=[
             CoolDown(cool_down_time),
             Twilight(
@@ -90,6 +90,7 @@ async def draw_me(app: Ariadne, group: Group, member: Member):
     img = await get_img_from_tags(token, tags)
     print("正在画画…")
     await MessageQueue().send_message(
+        app,
         group,
         MessageChain(
             At(target=member.id),
@@ -98,6 +99,7 @@ async def draw_me(app: Ariadne, group: Group, member: Member):
     )
     if img == None:
         await MessageQueue().send_message(
+            app,
             group,
             MessageChain(
                 At(target=member.id),
@@ -106,6 +108,7 @@ async def draw_me(app: Ariadne, group: Group, member: Member):
         )
     elif type(img) == int:
         await MessageQueue().send_message(
+            app,
             group,
             MessageChain(
                 At(target=member.id),
@@ -114,6 +117,7 @@ async def draw_me(app: Ariadne, group: Group, member: Member):
         )
     else:
         await MessageQueue().send_message(
+            app,
             group,
             MessageChain(
                 At(target=member.id),
@@ -127,7 +131,7 @@ async def draw_me(app: Ariadne, group: Group, member: Member):
 @ channel.use(
     ListenerSchema(
         listening_events=[GroupMessage],
-        decorators=[check_frequency(fqc_dict, fqc_time), MentionMe()],
+        decorators=[check_frequency(fqc_dict, fqc_time), MentionMe(BOT.info['name'])],
         inline_dispatchers=[
             CoolDown(cool_down_time),
             Twilight(
@@ -146,6 +150,7 @@ async def draw_by_tags(app: Ariadne, group: Group, member: Member, tags: RegexRe
         tags = quote(tags)
         print("正在画画…")
         b_msg1 = await MessageQueue().send_message(
+            app,
             group,
             MessageChain(
                 At(target=member.id),
@@ -161,6 +166,7 @@ async def draw_by_tags(app: Ariadne, group: Group, member: Member, tags: RegexRe
         print(f'tags={tags}')
         if img == None:
             await MessageQueue().send_message(
+                app,
                 group,
                 MessageChain(
                     At(target=member.id),
@@ -169,6 +175,7 @@ async def draw_by_tags(app: Ariadne, group: Group, member: Member, tags: RegexRe
             )
         elif type(img) == int:
             await MessageQueue().send_message(
+                app,
                 group,
                 MessageChain(
                     At(target=member.id),
@@ -219,11 +226,13 @@ async def draw_by_tags(app: Ariadne, group: Group, member: Member, tags: RegexRe
                 )
             )
             await MessageQueue().send_message(
+                app,
                 group,
                 MessageChain(Forward(fwd_node_list))
             )
             #await app.recall_message(b_msg1)
             b_msg2 = await MessageQueue().send_message(
+                app,
                 group,
                 MessageChain(
                     At(target=member.id),
@@ -235,6 +244,7 @@ async def draw_by_tags(app: Ariadne, group: Group, member: Member, tags: RegexRe
             #await app.recall_message(b_msg2)
     else:
         await MessageQueue().send_message(
+            app,
             group,
             MessageChain(
                 At(target=member.id),
@@ -263,6 +273,7 @@ async def draw_by_img(app: Ariadne, group: Group, member: Member, i_img: Image):
     i_img = base64.b64encode(i_img)
     print("正在画画…")
     b_msg1 = await MessageQueue().send_message(
+        app,
         group,
         MessageChain(
             At(target=member.id),
@@ -277,6 +288,7 @@ async def draw_by_img(app: Ariadne, group: Group, member: Member, i_img: Image):
     print("画完了")
     if r_img == None:
         await MessageQueue().send_message(
+            app,
             group,
             MessageChain(
                 At(target=member.id),
@@ -285,6 +297,7 @@ async def draw_by_img(app: Ariadne, group: Group, member: Member, i_img: Image):
         )
     elif type(r_img) == int:
         await MessageQueue().send_message(
+            app,
             group,
             MessageChain(
                 At(target=member.id),
@@ -336,11 +349,13 @@ async def draw_by_img(app: Ariadne, group: Group, member: Member, i_img: Image):
             )
         )
         await MessageQueue().send_message(
+            app,
             group,
             MessageChain(Forward(fwd_node_list))
         )
         #await app.recall_message(b_msg1)
         b_msg2 = await MessageQueue().send_message(
+            app,
             group,
             MessageChain(
                 At(target=member.id),

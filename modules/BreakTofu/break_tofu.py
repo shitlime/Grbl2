@@ -104,6 +104,7 @@ async def break_tofu(app: Ariadne, group: Group, source: Source):
     if tofu not in banText:
         print(f"豆腐块:{tofu}")
         await MessageQueue().send_message(
+            app,
             group,
             # MessageChain(Image(data_bytes= await get_tofu_img(tofu, fd_cache))),
             MessageChain(
@@ -141,6 +142,7 @@ async def break_tofu_cmd(app: Ariadne, target: Group|Friend, msg: MessageChain):
         else:
             print(f"豆腐块cmd:{tofu}")
             await MessageQueue().send_message(
+                app,
                 target,
                 MessageChain(
                     Plain(f"{tofu[:20]} : "),

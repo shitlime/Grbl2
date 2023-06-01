@@ -47,7 +47,7 @@ fqc_time = config['fqc_time']
 @channel.use(
     ListenerSchema(
         listening_events=[GroupMessage],
-        decorators=[check_frequency(fqc_dict, fqc_time), MentionMe()],
+        decorators=[check_frequency(fqc_dict, fqc_time), MentionMe(BOT.info['name'])],
         inline_dispatchers=[
             CoolDown(cool_down_time),
             Twilight(
@@ -63,6 +63,7 @@ async def acg_img(app: Ariadne, group: Group, member: Member):
     print("acgimg: 正在返回图片")
     if type(img) == bytes:
         await MessageQueue().send_message(
+            app,
             group,
             MessageChain(
                 At(target=member.id),
@@ -72,6 +73,7 @@ async def acg_img(app: Ariadne, group: Group, member: Member):
         )
     else:
         msg1 = await MessageQueue().send_message(
+            app,
             group,
             MessageChain(
                 At(target=member.id),
