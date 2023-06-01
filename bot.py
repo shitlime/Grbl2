@@ -33,8 +33,9 @@ async def friend_message_listener(app: Ariadne, friend: Friend, message: Message
     friendMsg = message.display # type:str
     #print(friend.id) # 打印QQ号码
     if friendMsg == "|say h":
-        await app.send_message(app, friend,
-        MessageChain([Plain("Hello, World!")])
+        await app.send_message(
+            friend,
+            MessageChain([Plain("Hello, World!")])
         )
 
 @app.broadcast.receiver("GroupMessage", decorators=[MentionMe(BOT.info['name'])])
