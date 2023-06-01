@@ -6,6 +6,7 @@ from pypinyin import pinyin
 from datetime import datetime
 
 from bot_init import BOT
+from modules.base.message_queue import MessageQueue
 from ..BreakTofu.break_tofu import break_tofu_cmd
 
 from graia.saya import Channel
@@ -180,7 +181,7 @@ async def search_char_info(app: Ariadne, target: Group | Friend,
             await break_tofu_cmd(app, target, "豆腐块" + re_msg)
             return
         # 默认直接发送
-        await app.send_message(target, re_msg)
+        await MessageQueue().send_message(target, re_msg)
 
 #查找字符信息：
 #以下为查字模块部分

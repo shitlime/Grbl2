@@ -1,6 +1,7 @@
 import asyncio
 
 from bot_init import BOT
+from modules.base.message_queue import MessageQueue
 from .create_setu import create_setu
 
 from graia.saya import Channel
@@ -37,7 +38,7 @@ cool_down_time = config['cool_down_time']
     )
 )
 async def SeTu(app: Ariadne, group: Group):
-    await app.send_message(
+    await MessageQueue().send_message(
         group,
         MessageChain(Image(data_bytes= await asyncio.to_thread(create_setu)))
     )

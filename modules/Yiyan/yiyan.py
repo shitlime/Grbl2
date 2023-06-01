@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from modules.base.message_queue import MessageQueue
+
 from .get_yiyan import get_yiyan, get_page_url
 
 from graia.saya import Channel
@@ -134,7 +136,7 @@ async def yiyan(app: Ariadne, target: Group | Friend, yiyan_type_cn: RegexResult
                 name="【被夺舍】小冰",
             )
         )
-        await app.send_message(
+        await MessageQueue().send_message(
             target,
             MessageChain(
                 Forward(fwd_node_list)
@@ -142,7 +144,7 @@ async def yiyan(app: Ariadne, target: Group | Friend, yiyan_type_cn: RegexResult
         )
     #send help
     elif show_help:
-        await app.send_message(
+        await MessageQueue().send_message(
             target,
             MessageChain(
                 Plain("指令格式：\n"),
@@ -151,7 +153,7 @@ async def yiyan(app: Ariadne, target: Group | Friend, yiyan_type_cn: RegexResult
         )
     # default: send yiyan
     else:
-        await app.send_message(
+        await MessageQueue().send_message(
             target,
             MessageChain(
                 Plain(f"{yiyan_text}\n\t——{from_who} {from_where}")

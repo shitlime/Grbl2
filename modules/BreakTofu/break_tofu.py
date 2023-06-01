@@ -2,6 +2,7 @@ import re
 import asyncio
 
 from bot_init import BOT
+from modules.base.message_queue import MessageQueue
 from .char2image2 import char2image, fonts_loader, image2bytes
 from ..base.get_quote_message import get_quote_message
 
@@ -102,7 +103,7 @@ async def break_tofu(app: Ariadne, group: Group, source: Source):
 
     if tofu not in banText:
         print(f"豆腐块:{tofu}")
-        await app.send_message(
+        await MessageQueue().send_message(
             group,
             # MessageChain(Image(data_bytes= await get_tofu_img(tofu, fd_cache))),
             MessageChain(
@@ -139,7 +140,7 @@ async def break_tofu_cmd(app: Ariadne, target: Group|Friend, msg: MessageChain):
             pass
         else:
             print(f"豆腐块cmd:{tofu}")
-            await app.send_message(
+            await MessageQueue().send_message(
                 target,
                 MessageChain(
                     Plain(f"{tofu[:20]} : "),

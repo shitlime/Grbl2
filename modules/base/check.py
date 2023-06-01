@@ -8,6 +8,8 @@ from graia.ariadne.model import Friend, Group, Member
 from graia.broadcast.exceptions import ExecutionStop
 from graia.broadcast.builtin.decorators import Depend
 
+from modules.base.message_queue import MessageQueue
+
 # ===== 时间控制 =====
 # 指令冷却(未实现)(废弃)
 def get_delay(prev_time: datetime):
@@ -25,7 +27,7 @@ def cool_down(prev_time: datetime, second: int):
         if prev_time == None:
             return
         elif get_delay(prev_time) < second:
-            await app.send_message(
+            await MessageQueue().send_message(
                 target,
                 MessageChain(
                     Plain("指令冷却中")
@@ -55,7 +57,7 @@ def check_frequency(fqc_dict: dict, max_frequency: int):
         if fqc == -1:    # 第一次的请求
             return
         elif fqc < max_frequency:    # 违反频率的请求
-            await app.send_message(
+            await MessageQueue().send_message(
                 group,
                 MessageChain(
                     At(member.id),
@@ -92,7 +94,7 @@ def check_single(log: list):
     async def check_single_deco(app: Ariadne, target: Group | Friend):
         if target in log:
             # 如果已经有进行中的实例，则做出提示
-            await app.send_message(
+            await MessageQueue().send_message(
                 target,
                 MessageChain("进行中…")
             )

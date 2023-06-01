@@ -1,6 +1,7 @@
 import asyncio
 
 from bot_init import BOT
+from modules.base.message_queue import MessageQueue
 from ..base.check import check_frequency
 from .get_acg_img import get_acg_img
 
@@ -61,7 +62,7 @@ async def acg_img(app: Ariadne, group: Group, member: Member):
     img = await get_acg_img()
     print("acgimg: 正在返回图片")
     if type(img) == bytes:
-        await app.send_message(
+        await MessageQueue().send_message(
             group,
             MessageChain(
                 At(target=member.id),
@@ -70,7 +71,7 @@ async def acg_img(app: Ariadne, group: Group, member: Member):
             )
         )
     else:
-        msg1 = await app.send_message(
+        msg1 = await MessageQueue().send_message(
             group,
             MessageChain(
                 At(target=member.id),

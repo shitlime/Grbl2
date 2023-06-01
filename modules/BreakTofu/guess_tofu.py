@@ -3,6 +3,7 @@ import random
 import asyncio
 
 from bot_init import BOT
+from modules.base.message_queue import MessageQueue
 from ..base.check import check_single
 from .guess_tofu_core import GuessTofu
 from .char2image2 import char2image, fonts_loader, image2bytes
@@ -112,7 +113,7 @@ async def guess_tofu(app: Ariadne, target: Group|Friend,
     # 记录发送的提示性消息
     msg_list = []
 
-    await app.send_message(
+    await MessageQueue().send_message(
         target,
         MessageChain(
             Plain(f"【猜豆腐】-等级{level}\n"),
@@ -145,7 +146,7 @@ async def guess_tofu(app: Ariadne, target: Group|Friend,
             answer = events.message_chain.display
             if len(answer) == 1:
                 if answer == gt.tofu:
-                    await app.send_message(
+                    await MessageQueue().send_message(
                         target,
                         MessageChain(
                             Plain(f'恭喜{player.name if type(player) is Member else player.nickname}'),
@@ -163,7 +164,7 @@ async def guess_tofu(app: Ariadne, target: Group|Friend,
                     print(f" 胜利：{player}")
                     return 0    # 答对0
                 else:
-                    msg = await app.send_message(
+                    msg = await MessageQueue().send_message(
                         target,
                         MessageChain(
                             Plain(player.name if type(player) is Member else player.nickname),
@@ -184,7 +185,7 @@ async def guess_tofu(app: Ariadne, target: Group|Friend,
                     for i in range(int(answer[2:])):
                         gt.mask_rule_reduce2()
                         gt.masker()
-                msg = await app.send_message(
+                msg = await MessageQueue().send_message(
                     target,
                     MessageChain(
                         Plain('猜不出来吗？给你点提示喵~→'),
@@ -203,7 +204,7 @@ async def guess_tofu(app: Ariadne, target: Group|Friend,
     while answer != 0:
         answer = await FunctionWaiter(waiter, [GroupMessage, FriendMessage]).wait(timeout=60)
         if answer is None:
-            await app.send_message(
+            await MessageQueue().send_message(
                 target,
                 MessageChain(
                     Plain('哼 哼 时间到了喵~↑\n'),
@@ -219,7 +220,7 @@ async def guess_tofu(app: Ariadne, target: Group|Friend,
             )
             break
         elif answer == -1:
-            await app.send_message(
+            await MessageQueue().send_message(
                 target,
                 MessageChain(
                     Plain('杂🐟 这么简单都猜不出来喵~↑\n'),
@@ -263,7 +264,7 @@ async def guess_tofu_competition(app: Ariadne, events: GroupMessage):
     print(events)
     print(app)
     # 竞赛介绍（规则说明
-    await app.send_message(
+    await MessageQueue().send_message(
         group,
         MessageChain(
             Plain('【猜豆腐竞赛】\n'),
@@ -286,7 +287,7 @@ async def guess_tofu_competition(app: Ariadne, events: GroupMessage):
         # 游戏流程（猜豆腐过程
         recovery_msg = []    # 回收消息
         #   开始
-        await app.send_message(
+        await MessageQueue().send_message(
             group,
             MessageChain(
                 Plain(f"【猜豆腐】-等级{level}\n"),
@@ -311,7 +312,7 @@ async def guess_tofu_competition(app: Ariadne, events: GroupMessage):
                 answer = waiter_events.message_chain.display
                 if answer in ['退出游戏', '结束游戏', '🏳️']:
                     # 退出
-                    await app.send_message(
+                    await MessageQueue().send_message(
                         group,
                         MessageChain(
                             Plain('杂🐟'),
@@ -331,7 +332,7 @@ async def guess_tofu_competition(app: Ariadne, events: GroupMessage):
                 elif len(answer) == 1:
                     if answer == gt.tofu:
                         # 答对
-                        await app.send_message(
+                        await MessageQueue().send_message(
                             group,
                             MessageChain(
                                 At(player.id),
@@ -357,7 +358,7 @@ async def guess_tofu_competition(app: Ariadne, events: GroupMessage):
                     else:
                         # 答错
                         flag = random.choice([True, False])
-                        msg = await app.send_message(
+                        msg = await MessageQueue().send_message(
                             group,
                             MessageChain(
                                 At(player.id),
@@ -387,7 +388,7 @@ async def guess_tofu_competition(app: Ariadne, events: GroupMessage):
                             gt.mask_rule_reduce2()
                             gt.masker()
                             hint_count += 1
-                    msg = await app.send_message(
+                    msg = await MessageQueue().send_message(
                         group,
                         MessageChain(
                             Plain('猜不出来吗？给你点提示喵~→'),
@@ -409,7 +410,7 @@ async def guess_tofu_competition(app: Ariadne, events: GroupMessage):
             answer = await FunctionWaiter(waiter, [GroupMessage]).wait(timeout=60)
             if answer is None:
                 # 超时
-                await app.send_message(
+                await MessageQueue().send_message(
                     group,
                     MessageChain(
                         Plain('哼 哼 时间到了喵~↑\n'),
@@ -426,7 +427,7 @@ async def guess_tofu_competition(app: Ariadne, events: GroupMessage):
                 break
         # 一轮结束（重置一些变量，延时5秒撤回多余的消息
         if i < (rounds - 1):
-            msg = await app.send_message(group, MessageChain("即将开始下一轮……"))
+            msg = await MessageQueue().send_message(group, MessageChain("即将开始下一轮……"))
             recovery_msg.append(msg)
             await asyncio.sleep(4)
         del gt
@@ -441,7 +442,7 @@ async def guess_tofu_competition(app: Ariadne, events: GroupMessage):
     for p, s in scroes.items():
         p = await app.get_member(group, p)
         result += f"{p.name} : {s}分\n"
-    await app.send_message(
+    await MessageQueue().send_message(
         group,
         MessageChain(
             Plain("【竞赛结束】\n"),

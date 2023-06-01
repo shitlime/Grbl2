@@ -33,7 +33,7 @@ async def friend_message_listener(app: Ariadne, friend: Friend, message: Message
     friendMsg = message.display # type:str
     #print(friend.id) # 打印QQ号码
     if friendMsg == "|say h":
-        await MessageQueue().send_message(app, friend,
+        await app.send_message(app, friend,
         MessageChain([Plain("Hello, World!")])
         )
 
@@ -41,15 +41,15 @@ async def friend_message_listener(app: Ariadne, friend: Friend, message: Message
 async def group_message_listener(app: Ariadne, group: Group, member: Member, message: MessageChain):
     message = message.display
     if "妈妈是谁" in message:
-        await app.send_message(group,
+        await MessageQueue().send_message(group,
         MessageChain([Plain(BOT.info['author_info'])])
         )
     elif "爸爸是谁" in message or "主人是谁" in message:
-        await app.send_message(group,
+        await MessageQueue().send_message(group,
         MessageChain([Plain("不知道哦")])
         )
     elif "在吗" in message:
-        await app.send_message(group,
+        await MessageQueue().send_message(group,
         MessageChain([Plain("不在哦")])
         )
 

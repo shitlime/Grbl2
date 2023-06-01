@@ -1,6 +1,7 @@
 import asyncio
 
 from bot_init import BOT
+from modules.base.message_queue import MessageQueue
 from .get_60s_news import get_news_img
 from ..base.check import check_member, check_friend
 
@@ -94,14 +95,14 @@ async def send_news_img(app: Ariadne):
 async def send_news_img_admin(app: Ariadne, target: Friend | Group):
     news_img = await get_news_img()
     if type(news_img) == int:
-        await app.send_message(
+        await MessageQueue().send_message(
             target,
             MessageChain(
                 Plain(f"err-or发生{news_img}")
             )
         )
     else:
-        await app.send_message(
+        await MessageQueue().send_message(
             target,
             MessageChain(
                 Image(base64=news_img),
