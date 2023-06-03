@@ -1,12 +1,12 @@
 # 发送消息用的中转站
-# 2023-06-01 Shitlime： 为了躲避风控，需要收集全局的消息发送，并进行排队延迟
+# 2023-06-01 Shitlime： 为了躲避风控，需要收集全局的消息发送，并进行排队延时
 
 import asyncio
 
 from graia.ariadne.app import Ariadne
 
 # 全局延时
-msg_delay = 9
+msg_delay = 12
 
 class MessageQueue:
     __instance = None
