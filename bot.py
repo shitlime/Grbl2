@@ -70,8 +70,8 @@ async def start_background(loop: AbstractEventLoop):
 
 @app.broadcast.receiver(ApplicationShutdowned)
 async def stop_background():
-    global bg_tsk
-    if bg_tsk:
+    global bg_tsk_1
+    if bg_tsk_1:
         bg_tsk_1.cancel() # 取不取消随你, 但不要留到 Ariadne 生命周期外
         await bg_tsk_1
         bg_tsk_1 = None

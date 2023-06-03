@@ -6,7 +6,7 @@ import asyncio
 from graia.ariadne.app import Ariadne
 
 # 全局延时
-msg_delay = 3.5
+msg_delay = 9
 
 class MessageQueue:
     __instance = None
