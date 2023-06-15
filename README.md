@@ -71,9 +71,14 @@ modules_config:
 
 里面是覌白的各种功能模块
 
-## 说明
-+ `search_char` 模块需要 `观星三拼` 和其附带的 `四角号码`查字文件（未提供，可以考虑不运行此模块）
+## 重要说明
++ `modules/SearchThing/search_char`
+    - 模块运行需要对应的查字文件（未提供，可以考虑不运行此模块）
 
-+ `break_tofu` 模块运行需要[天珩字体库](http://cheonhyeong.com/Simplified/download.html)
++ `modules/BreakTofu`
+    - 模块运行需要对应的字体文件（未提供，可以考虑不运行此模块）
+
++ `modules/AIDrawing`
+    - 该模块已经失效
 
 *暂时懒得写了（屑~*
