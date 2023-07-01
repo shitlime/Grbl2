@@ -3,10 +3,12 @@
 
 import asyncio
 
+import random
+
 from graia.ariadne.app import Ariadne
 
 # 全局延时
-msg_delay = 12
+msg_delay = 26  # 上次稳定在：26
 
 class MessageQueue:
     __instance = None
@@ -18,12 +20,17 @@ class MessageQueue:
         return cls.__instance
     
     async def send_message_worker(self):
-        print("消息队列开始工作")
+        print(f"消息队列开始工作，当前延时{msg_delay}秒")
         while True:
             # 从消息队列中取出待发送的消息
             app, target, message, quote = await self.queue.get()
             try:
-                await app.send_message(target, message)
+                mask = ''.join([ chr(random.randint(0x100000, 0x10FFFD)) for i in range(random.randint(20, 70)) ])
+                mid = int(len(mask) / 2)
+                await app.send_message(target, 
+                                       mask[:mid] + '\n'
+                                       + message + '\n'
+                                       + mask[mid:])
             except Exception as e:
                print(f"ERROR: {e}")
             await asyncio.sleep(msg_delay)
