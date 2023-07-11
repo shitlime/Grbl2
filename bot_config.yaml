@@ -39,6 +39,8 @@ modules:
   - "modules.BreakTofu.guess_tofu"
 
 modules_config:
+  message_queue:
+    delay: 0  # 上次稳定在：26
   search_char:
     dict_path_windows: "目录\\机器人查字系统"
     dict_path_linux: "目录/机器人查字系统"
