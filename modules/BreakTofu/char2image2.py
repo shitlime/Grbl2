@@ -10,7 +10,8 @@ def char2image(
     fonts_dict: list,
     offset=(20, 60, 30),
     background_color=(255, 255, 255),
-    char_color=(0, 0, 0)
+    char_color=(0, 0, 0),
+    highlight_char_color=(99, 99, 99)  # 目前指定Unicode CJKV ExtI 为“高亮”. 取I（9）为颜色编码（十进制哦
     ):
     """
     string: 需要渲染的字符（串）
@@ -18,6 +19,7 @@ def char2image(
     offset: 文本的偏移信息，格式：(x初始位置, y初始位置, 行间距)  单位：像素
     background_color: 背景颜色
     char_color: 字符颜色
+    highlight_char_color: 高亮字符颜色
 
     Returns: 图片/img
     """
@@ -58,7 +60,12 @@ def char2image(
             x = init_x
             if c == '\n':
                 continue
-        draw_text.text((x, y), c, char_color, font)
+        if 0x2EBF0 <= ord(c) <= 0x2EE4A:
+            # 高亮字符
+            draw_text.text((x, y), c, highlight_char_color, font)
+        else:
+            # 正常字符
+            draw_text.text((x, y), c, char_color, font)
         x += font.getlength(c)
     
     # return
