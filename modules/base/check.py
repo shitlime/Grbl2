@@ -27,8 +27,7 @@ def cool_down(prev_time: datetime, second: int):
         if prev_time == None:
             return
         elif get_delay(prev_time) < second:
-            await MessageQueue().send_message(
-                app,
+            await app.send_message(
                 target,
                 MessageChain(
                     Plain("指令冷却中")
@@ -58,8 +57,7 @@ def check_frequency(fqc_dict: dict, max_frequency: int):
         if fqc == -1:    # 第一次的请求
             return
         elif fqc < max_frequency:    # 违反频率的请求
-            await MessageQueue().send_message(
-                app,
+            await app.send_message(
                 group,
                 MessageChain(
                     At(member.id),
@@ -96,8 +94,7 @@ def check_single(log: list):
     async def check_single_deco(app: Ariadne, target: Group | Friend):
         if target in log:
             # 如果已经有进行中的实例，则做出提示
-            await MessageQueue().send_message(
-                app,
+            await app.send_message(
                 target,
                 MessageChain("进行中…")
             )

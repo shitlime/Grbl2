@@ -68,7 +68,7 @@ async def web_search(app: Ariadne, target: Group | Friend, search_mode: RegexRes
     re_msg = get_search_link(search_mode, search_string)
     #发送消息
     if re_msg != None:
-        await MessageQueue().send_message(app, target, re_msg)
+        await app.send_message(target, re_msg)
 
 # 回复式消息响应：
 @channel.use(
@@ -94,7 +94,7 @@ async def web_search_quote(app: Ariadne, group: Group, source: Source, search_mo
     re_msg = get_search_link(search_mode, search_string)
     # 发送消息
     if re_msg != None:
-        await MessageQueue().send_message(app, group, re_msg)
+        await app.send_message(group, re_msg)
 
 
 # 搜索链接生成：

@@ -38,8 +38,7 @@ cool_down_time = config['cool_down_time']
     )
 )
 async def SeTu(app: Ariadne, group: Group):
-    await MessageQueue().send_message(
-        app,
+    await app.send_message(
         group,
         MessageChain(Image(data_bytes= await asyncio.to_thread(create_setu)))
     )

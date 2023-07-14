@@ -137,8 +137,7 @@ async def yiyan(app: Ariadne, target: Group | Friend, yiyan_type_cn: RegexResult
                 name="【被夺舍】小冰",
             )
         )
-        await MessageQueue().send_message(
-            app,
+        await app.send_message(
             target,
             MessageChain(
                 Forward(fwd_node_list)
@@ -146,8 +145,7 @@ async def yiyan(app: Ariadne, target: Group | Friend, yiyan_type_cn: RegexResult
         )
     #send help
     elif show_help:
-        await MessageQueue().send_message(
-            app,
+        await app.send_message(
             target,
             MessageChain(
                 Plain("指令格式：\n"),
@@ -156,8 +154,7 @@ async def yiyan(app: Ariadne, target: Group | Friend, yiyan_type_cn: RegexResult
         )
     # default: send yiyan
     else:
-        await MessageQueue().send_message(
-            app,
+        await app.send_message(
             target,
             MessageChain(
                 Plain(f"{yiyan_text}\n\t——{from_who} {from_where}")
