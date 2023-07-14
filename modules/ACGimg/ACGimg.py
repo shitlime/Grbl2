@@ -62,8 +62,7 @@ async def acg_img(app: Ariadne, group: Group, member: Member):
     img = await get_acg_img()
     print("acgimg: 正在返回图片")
     if type(img) == bytes:
-        await MessageQueue().send_message(
-            app,
+        await app.send_message(
             group,
             MessageChain(
                 At(target=member.id),
@@ -72,8 +71,7 @@ async def acg_img(app: Ariadne, group: Group, member: Member):
             )
         )
     else:
-        msg1 = await MessageQueue().send_message(
-            app,
+        msg1 = await app.send_message(
             group,
             MessageChain(
                 At(target=member.id),
