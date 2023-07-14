@@ -35,7 +35,7 @@ class GuessTofu():
         cjk_f = (0x2CEB0, 0x2EBEF)  # 扩F
         cjk_g = (0x30000, 0x3134A)  # 扩G
         cjk_h = (0x31350, 0x323AF)  # 扩H
-        cjk_i = (0x2EBF0, 0x2EE4A)  # 扩I
+        cjk_i = (0x2EBF0, 0x2EE5D)  # 扩I
         if char_range:
             self.tofu = self.random_char(char_range)
         elif level == 0:
