@@ -60,7 +60,7 @@ def char2image(
             x = init_x
             if c == '\n':
                 continue
-        if 0x2EBF0 <= ord(c) <= 0x2EE4A:
+        if 0x2EBF0 <= ord(c) <= 0x2EE5D:
             # 高亮字符
             draw_text.text((x, y), c, highlight_char_color, font)
         else:
