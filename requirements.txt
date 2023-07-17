@@ -1,0 +1,7 @@
+graia-ariadne==0.11.4
+graia-saya==0.0.17
+graia-scheduler==0.1.4
+Pillow==9.5.0
+pypinyin==0.48.0
+PyYAML==6.0
+fonttools==4.39.3
