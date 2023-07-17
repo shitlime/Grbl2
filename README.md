@@ -1,6 +1,6 @@
 # Grbl2
 
-**覌白** 是一个基于[Ariadne](https://github.com/GraiaProject/Ariadne)框架的Python QQ Bot，依靠 `Ariadne` + `mirai-api-http` + `Mirai` 形成完整Bot的运行环境。
+**覌白** 是一个基于[Ariadne](https://github.com/GraiaProject/Ariadne)框架的Python QQ Bot，依靠 `Ariadne` + `mirai-api-http` + `Mirai` 形成完整Bot运行环境。
 
 > 项目名取自然码双拼的码，2代表第二代（第一代是2021年以前的事了）
 
@@ -8,7 +8,7 @@
 [覌白的图片_由AI画图产生](头像v2.png)  
 
 
-**⚠️摸鱼声明：应该不会花时间管理本仓库**
+~~⚠️摸鱼声明：应该不会花时间管理本仓库~~
 
 
 # 快速开始
@@ -56,9 +56,9 @@ python3 ./bot.py
 
 ## Ariadne框架
 
-+ graia-ariadne *Ariadne基础*
-+ graia-saya *支持Bot分模块*
-+ graia-scheduler *支持Bot定时发送消息*
++ `graia-ariadne` *Ariadne基础*
++ `graia-saya` *支持Bot分模块开发*
++ `graia-scheduler` *支持Bot定时发送消息*
 
 
 **更多：**  
