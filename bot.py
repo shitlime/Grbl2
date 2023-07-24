@@ -76,7 +76,10 @@ async def stop_background():
 # 加载saya模块
 with saya.module_context():
     for m in BOT.modules:
-        saya.require(m)
+        try:
+            saya.require(m)
+        except (Exception, RuntimeError) as e:
+            print(f"加载[{m}]模块时发生错误：{e}")
 
 # 阻塞式启动
 app.launch_blocking()
