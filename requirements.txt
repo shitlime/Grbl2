@@ -5,3 +5,4 @@ Pillow==9.5.0
 pypinyin==0.48.0
 PyYAML==6.0
 fonttools==4.39.3
+bilibili-api-python==15.5.1
