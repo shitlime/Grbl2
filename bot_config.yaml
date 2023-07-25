@@ -37,6 +37,7 @@ modules:
   - "modules.Admin.recall_message"
   - "modules.SixtySecNews.SixtySecNews"
   - "modules.BreakTofu.guess_tofu"
+  - "modules.Bilibili.get_video_info"
 
 modules_config:
   message_queue:
