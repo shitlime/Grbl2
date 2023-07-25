@@ -1,11 +1,13 @@
-from video import get_video_info
+from .video import get_video_info
+
+from ..base.get_quote_message import get_quote_message
 
 from graia.saya import Channel
 from graia.ariadne import Ariadne
 from graia.ariadne.model import Group, Friend
 from graia.ariadne.event.message import FriendMessage, GroupMessage
 from graia.ariadne.message.chain import MessageChain
-from graia.ariadne.message.element import Plain, Image, At
+from graia.ariadne.message.element import Plain, Image, At, Source, Quote
 from graia.saya.builtins.broadcast.schema import ListenerSchema
 from graia.ariadne.message.parser.twilight import(
     Twilight,
@@ -46,26 +48,33 @@ async def get_video_info_quote(app: Ariadne, target: Group | Friend, source: Sou
     message = await Ariadne.current().get_message_from_id(source.id, target)
     # 检测是否带回复
     if message.quote:
-        quote_message = message.quote.origin.display
+        quote_message = await get_quote_message(source.id, target)
+        # 获取文本
+        if type(quote_message) == Quote:
+            string = quote_message.origin.display    # 得到quote的文本
+        elif type(quote_message) == type(None):
+            return
+        else:
+            string = quote_message.message_chain.display    # 得到quote的文本
     else:
         return
     # 获取视屏信息
-    info = get_video_info(quote_message)
+    info = await get_video_info(string)
     if info:
         # 发送消息
-        app.send_message(
+        await app.send_message(
             target,
             MessageChain(
                 Plain(f"标题：{info.get('title')}\n"),
                 Image(url=info.get('pic')),
                 Plain(f"up主：{info.get('owner').get('name')}\n"),
                 Plain(f"分区：{info.get('tname')}\n"),
-                Plain(f"播放量：{info.get('view')}\n"),
-                Plain(f"收藏：{info.get('favorite')}\n"),
-                Plain(f"硬币：{info.get('coin')}\n"),
-                Plain(f"点赞：{info.get('like')}\n"),
-                Plain(f"不喜欢：{info.get('dislike')}\n"),
+                Plain(f"播放量：{info.get('stat').get('view')}\n"),
+                Plain(f"收藏：{info.get('stat').get('favorite')}\n"),
+                Plain(f"硬币：{info.get('stat').get('coin')}\n"),
+                Plain(f"点赞：{info.get('stat').get('like')}\n"),
+                Plain(f"不喜欢：{info.get('stat').get('dislike')}\n"),
                 Plain(f"简介：{info.get('desc')}\n"),
-                Plain(f"ID：{info.get('bvid')}|{info.get('aid')}\n")
+                Plain(f"ID：{info.get('bvid')}|av{info.get('aid')}\n")
             ),
         )
