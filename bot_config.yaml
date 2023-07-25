@@ -42,21 +42,21 @@ modules_config:
   message_queue:
     delay: 0  # 上次稳定在：26
   search_char:
-    dict_path_windows: "目录\\机器人查字系统"
-    dict_path_linux: "目录/机器人查字系统"
+    dict_path_windows: "resources\\search_char"
+    dict_path_linux: "resources/search_char"
   ACGimg:
     cool_down_time: 6
     fqc_time: 30
   SeTu:
-    font_path_windows: "目录\\字体\\loli.ttf"
-    font_path_linux: "目录/字体/loli.ttf"
+    font_path_windows: "resources\\font\\loli.ttf"
+    font_path_linux: "resources/font/loli.ttf"
     cool_down_time: 10
   break_tofu:
-    font_path_windows: "目录\\TH-Tshyn\\"
-    font_path_linux: "目录/TH-Tshyn/"
+    font_path_windows: "resources\\font\\TH-Tshyn"
+    font_path_linux: "resources/font/TH-Tshyn"
   guess_tofu:
-    font_path_windows: "目录\\TH-Tshyn\\"
-    font_path_linux: "目录/TH-Tshyn/"
+    font_path_windows: "resources\\font\\TH-Tshyn"
+    font_path_linux: "resources/font/TH-Tshyn"
   AI_drawing:
     token_list: ["1919810114514", "1919810114514", "1919810114514"]
     token_index: 0    # 指示使用第几个token
