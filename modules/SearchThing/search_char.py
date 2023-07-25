@@ -53,8 +53,8 @@ search_mode_list = ["g", "G", "观", "观星三拼",
 #名称：
 dict_g_name = "tri_py_gxsp.dict-b3.yaml"
 dict_s_name = "sjhm.dict-b1.yaml"
-dict_f_name = "jbjcf.txt"
-dict_n_name = "ning.txt"
+dict_f_name = "feiwu.txt"
+dict_n_name = "new_tri_py_gxsp.txt"
 
 #共用路径(根据系统设置不同路径)：
 if BOT.sys == 'Windows':
