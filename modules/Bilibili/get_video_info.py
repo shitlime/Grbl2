@@ -1,6 +1,7 @@
 from .video import get_video_info
 
 from ..base.get_quote_message import get_quote_message
+from ..base.time2str import timestamp2str
 
 from graia.saya import Channel
 from graia.ariadne import Ariadne
@@ -73,8 +74,8 @@ async def get_video_info_quote(app: Ariadne, target: Group | Friend, source: Sou
                 Plain(f"收藏：{info.get('stat').get('favorite')}\n"),
                 Plain(f"硬币：{info.get('stat').get('coin')}\n"),
                 Plain(f"点赞：{info.get('stat').get('like')}\n"),
-                Plain(f"不喜欢：{info.get('stat').get('dislike')}\n"),
+                Plain(f"投稿：{timestamp2str(info.get('pubdate'))}\n"),
                 Plain(f"简介：{info.get('desc')}\n"),
-                Plain(f"ID：{info.get('bvid')}|av{info.get('aid')}\n")
+                Plain(f"ID：{info.get('bvid')} av{info.get('aid')}\n")
             ),
         )
