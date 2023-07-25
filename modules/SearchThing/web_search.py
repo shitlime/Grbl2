@@ -85,11 +85,15 @@ async def web_search(app: Ariadne, target: Group | Friend, search_mode: RegexRes
     )
 )
 async def web_search_quote(app: Ariadne, group: Group, source: Source, search_mode: RegexResult):
-    # 提取匹配的文本
-    search_mode = search_mode.result.display
     # 得到quote的文本
     quote_message = await Ariadne.current().get_message_from_id(source.id, group)
-    search_string = quote_message.quote.origin.display
+    # 验证消息是否带回复
+    if quote_message.quote != None:
+        search_string = quote_message.quote.origin.display
+    else:
+        return
+    # 提取匹配的文本
+    search_mode = search_mode.result.display
     # 生成链接
     re_msg = get_search_link(search_mode, search_string)
     # 发送消息
