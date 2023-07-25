@@ -94,7 +94,7 @@ async def break_tofu(app: Ariadne, group: Group, source: Source):
     if type(quote_message) == Quote:
         tofu = quote_message.origin.display    # 得到quote的文本
     elif type(quote_message) == type(None):
-        pass
+        return
     else:
         tofu = quote_message.message_chain.display    # 得到quote的文本
 
