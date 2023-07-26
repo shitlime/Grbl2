@@ -36,8 +36,8 @@ saya.require("modules.get_ip")
 
 re_get_ipv6_linux = re.compile(r'inet6 ([0-9a-f:]+)')
 re_get_ipv4_linux = re.compile(r'inet ([0-9\.]+)')
-re_get_wlan_ip_addr_linux = re.compile(r'wlan\d:(.+)', flags=re.DOTALL)
-re_get_lan_ip_addr_linux = re.compile(r'eth\d:(.+)', flags=re.DOTALL)
+re_get_wlan_ip_addr_linux = re.compile(r'wlan0:(.+)', flags=re.DOTALL)
+re_get_lan_ip_addr_linux = re.compile(r'eth0:(.+)', flags=re.DOTALL)
 
 @channel.use(
     ListenerSchema(
@@ -86,9 +86,9 @@ def get_ip_v6(s1):
     return s2
 
 def get_ip_addr():
-    s1 = os.popen("ip addr")
-    wlan = re_get_wlan_ip_addr_linux.search(s1.read())
-    lan = re_get_lan_ip_addr_linux.search(s1.read())
+    s1 = os.popen("ip addr").read()
+    wlan = re_get_wlan_ip_addr_linux.search(s1)
+    lan  = re_get_lan_ip_addr_linux.search(s1)
     if lan:
         lan = lan.group(1)
         return lan
