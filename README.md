@@ -17,8 +17,33 @@
 
 利用Dockerfile快速启动
 
-1. 安装Docker
+0. 获得源代码
+```shell
+git clone https://github.com/shitlime/Grbl2.git
+
+cd Grbl2
+```
+
+1. 安装Docker（有多种安装方式，不提供参考）
+
 2. 获取Python3镜像
+```
+docker pull python
+```
+
+3. 构建Grbl2镜像
+```
+docker build -t grbl2 .
+```
+
+4. 运行容器
+```
+docker run -it --rm --name grbl2-running grbl2
+```
+在后台运行
+```
+docker run -itd --rm --name grbl2-running grbl2
+```
 
 
 ## 直接运行
@@ -93,12 +118,14 @@ modules_config:
 ```
 
 
-# 模块
-`modules`是模块文件夹
+# 项目结构
+
+## 模块
+`modules` 是模块文件夹
 
 里面是覌白的各种功能模块
 
-## 重要说明
+### 重要说明
 + `modules/SearchThing/search_char`
     - 模块运行需要对应的查字文件（未提供，可以考虑不运行此模块）
 
@@ -107,6 +134,12 @@ modules_config:
 
 + `modules/AIDrawing`
     - 该模块已经失效
+
+
+## 资源
+`resources` 是资源文件夹（未提供）
+
+所有模块运行需要的资源都可以放在这里，之后在配置文件中指定相对路径即可
 
 
 # 其他
