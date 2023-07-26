@@ -36,7 +36,8 @@ saya.require("modules.get_ip")
 
 re_get_ipv6_linux = re.compile(r'inet6 ([0-9a-f:]+)')
 re_get_ipv4_linux = re.compile(r'inet ([0-9\.]+)')
-re_get_wlan_ip_addr_linux = re.compile(r'wlan0:(.+)', flags=re.DOTALL)
+re_get_wlan_ip_addr_linux = re.compile(r'wlan\d:(.+)', flags=re.DOTALL)
+re_get_lan_ip_addr_linux = re.compile(r'eth\d:(.+)', flags=re.DOTALL)
 
 @channel.use(
     ListenerSchema(
@@ -54,7 +55,7 @@ re_get_wlan_ip_addr_linux = re.compile(r'wlan0:(.+)', flags=re.DOTALL)
 async def get_ip(app: Ariadne, admin: Friend, mode: RegexResult):
     mode = mode.result.display
     if mode in ["4", "v4"]:
-        s1 = await asyncio.to_thread(get_wlan_ip_addr)
+        s1 = await asyncio.to_thread(get_ip_addr)
         await app.send_message(
             admin,
             MessageChain(
@@ -64,7 +65,7 @@ async def get_ip(app: Ariadne, admin: Friend, mode: RegexResult):
             )
         )
     else:
-        s1 = await asyncio.to_thread(get_wlan_ip_addr)
+        s1 = await asyncio.to_thread(get_ip_addr)
         await app.send_message(
             admin,
             MessageChain(
@@ -84,8 +85,13 @@ def get_ip_v6(s1):
     s2 = s2.group(1)
     return s2
 
-def get_wlan_ip_addr():
+def get_ip_addr():
     s1 = os.popen("ip addr")
-    s2 = re_get_wlan_ip_addr_linux.search(s1.read())
-    s2 = s2.group(1)
-    return s2
+    wlan = re_get_wlan_ip_addr_linux.search(s1.read())
+    lan = re_get_lan_ip_addr_linux.search(s1.read())
+    if lan:
+        lan = lan.group(1)
+        return lan
+    if wlan:
+        wlan = wlan.group(1)
+        return wlan
