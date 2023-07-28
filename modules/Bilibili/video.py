@@ -33,8 +33,9 @@ async def get_real_url(url: str):
         'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36',
         'Connection': 'close'
     }
+    timeout = aiohttp.ClientTimeout(total = 30)
     print(f"Bilibili.get_real_url: 开始访问手机端分享链接 {url}")
-    async with aiohttp.ClientSession(headers=headers) as session:
+    async with aiohttp.ClientSession(headers=headers, timeout=timeout) as session:
         async with session.get(url) as result:
             if result.status == 200:
                 print(f"Bilibili.get_real_url: 获取到原始链接 {result.url}")
