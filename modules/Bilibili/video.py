@@ -29,11 +29,18 @@ async def get_url(string: str):
 
 async def get_real_url(url: str):
     """从手机端分享的链接转换成普通链接"""
-    async with aiohttp.ClientSession() as session:
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36',
+        'Connection': 'close'
+    }
+    print(f"Bilibili.get_real_url: 开始访问手机端分享链接 {url}")
+    async with aiohttp.ClientSession(headers=headers) as session:
         async with session.get(url) as result:
             if result.status == 200:
-                print(result.url)
+                print(f"Bilibili.get_real_url: 获取到原始链接 {result.url}")
                 return str(result.url)
+            else:
+                print(f"Bilibili.get_real_url: 返回结果错误，状态码 {result.status}")
 
 async def get_video_info(string: str) -> dict | None:
     # 输入信息
