@@ -16,9 +16,10 @@ jobs:
       run: docker build . --file Dockerfile --tag grbl2:$(date +%s)
 
     - name: Test running
-      uses: docker://grbl2
+      uses: docker://alpine
       with:
         entrypoint: /bin/sh
+        args: grbl2
 
     - name: Upload source code artifact
       uses: actions/upload-artifact@v2
