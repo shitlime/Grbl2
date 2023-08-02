@@ -29,9 +29,7 @@ jobs:
       run: pip install -r requirements.txt
 
     - name: Test running
-      run: |
-        cp bot_config.yaml grbl_config.yaml
-        python ./bot.py
+      run: ./CI-text.sh
 
     - name: Upload source code artifact
       uses: actions/upload-artifact@v2
