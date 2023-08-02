@@ -15,5 +15,14 @@ jobs:
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag grbl2:$(date +%s)
 
-    - name: Test runing
-    - run: docker run -it --rm --name grbl2-running grbl2
+    - name: Test running
+      uses: docker://alpine
+      with:
+        entrypoint: /bin/sh
+        args: -c "docker run -itd --rm --name grbl2-running grbl2"
+
+    - name: Upload source code artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: source-code
+        path: .  # 指定要上传的源代码路径，这里假设源代码位于根目录下
