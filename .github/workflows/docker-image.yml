@@ -29,7 +29,9 @@ jobs:
       run: pip install -r requirements.txt
 
     - name: Test running
-      run: ./CI-text.sh
+      run: |
+        chmod +x ./CI-text.sh
+        ./CI-text.sh
 
     - name: Upload source code artifact
       uses: actions/upload-artifact@v2
