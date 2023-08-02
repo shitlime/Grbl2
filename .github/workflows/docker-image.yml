@@ -31,7 +31,9 @@ jobs:
     - name: Test running
       run: |
         cp bot_config.yaml grbl_config.yaml
-        timeout 60s bash -c "python ./bot.py"  # 尝试运行60s后退出
+        timeout 60s python ./bot.py  # 尝试运行60s后退出
+        exit_code=$?
+        exit $exit_code
 
     - name: Upload source code artifact
       uses: actions/upload-artifact@v2
