@@ -16,7 +16,7 @@ jobs:
       run: docker build . --file Dockerfile --tag grbl2:$(date +%s)
 
     - name: Test running
-      uses: docker://alpine
+      uses: docker://grbl2
       with:
         entrypoint: /bin/sh
 
