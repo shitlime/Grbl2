@@ -1,10 +1,11 @@
 cp bot_config.yaml grbl_config.yaml
-timeout 120s python ./bot.py  # 尝试运行120s后退出
+# 尝试运行120s后退出，若时长120s，返回0；若不足120s，返回不为0
+timeout 120s python ./bot.py
 exit_code=$?
 if [ $exit_code -eq 0 ]; then
-    echo "Python程序出错: （在规定时间内退出）请检查输出的信息 $exit_code"
+    echo "程序测试出错！（在规定测试时间内退出）请检查输出的信息 $exit_code"
     exit $exit_code
 else
-    echo "Python程序测试完成！ (在规定时间内没有退出） "
+    echo "程序测试完成！ (在规定测试时间内没有退出）"
     exit 0
 fi
