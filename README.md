@@ -19,7 +19,7 @@
 
 0. 获得源代码
 ```shell
-git clone https://github.com/shitlime/Grbl2.git
+git clone --recurse-submodules https://github.com/shitlime/Grbl2.git
 
 cd Grbl2
 ```
@@ -53,7 +53,7 @@ docker run -itd --rm --name grbl2-running grbl2
 
 0. 获得源代码
 ```shell
-git clone https://github.com/shitlime/Grbl2.git
+git clone --recurse-submodules https://github.com/shitlime/Grbl2.git
 
 cd Grbl2
 ```
@@ -143,3 +143,5 @@ modules_config:
 
 
 # 其他
+
++ 感谢飞梧的 [cjk_split](https://github.com/asgsdbrseg/cjk_split)
