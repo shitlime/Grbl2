@@ -19,7 +19,7 @@ jobs:
       uses: docker://alpine
       with:
         entrypoint: /bin/sh
-        args: grbl2
+        args: -c "docker run grbl2"
 
     - name: Upload source code artifact
       uses: actions/upload-artifact@v2
