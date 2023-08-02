@@ -51,10 +51,10 @@ search_mode_list = ["g", "G", "观", "观星三拼",
 #查字数据库配置：
 #码表型
 #名称：
-dict_g_name = "tri_py_gxsp.dict-b3.yaml"
-dict_s_name = "sjhm.dict-b1.yaml"
-dict_f_name = "feiwu.txt"
-dict_n_name = "new_tri_py_gxsp.txt"
+dict_g_name = os.path.join("private", "tri_py_gxsp.dict-b3.yaml")
+dict_s_name = os.path.join("private", "sjhm.dict-b1.yaml")
+dict_f_name = os.path.join("public", "cjk_split", "全拆分.txt")
+dict_n_name = os.path.join("private", "new_tri_py_gxsp.txt")
 
 #共用路径(根据系统设置不同路径)：
 if BOT.sys == 'Windows':
@@ -215,12 +215,17 @@ def dict_change(dict_str: str):#字典处理
 
 def load_dict(dict_path: str, dict_name: str):
     print("装载字典……")
-    dt_s = readtxt(dict_path, dict_name)
-    dt = dict_change(dt_s)
-    print(f"{dict_name}装载完成！")
+    try:
+        dt_s = readtxt(dict_path, dict_name)
+        dt = dict_change(dt_s)
+        print(f"{dict_name}装载完成！")
+    except (Exception, RuntimeError) as e:
+        print(f"加载{dict_name}字典时发生错误：{e}")
+        return None
     return dt
 
 def find_char(dt: dict, ch: str):
+    if dt == None: return '未装载此字典'
     tb = dt.get(ch)  #tb:table,码；ch:char,字符
     if tb == None:
         return '404 NOT FOUND 喵~'
