@@ -1,6 +1,7 @@
 graia-ariadne==0.11.4
+graia-broadcast==0.19.2
 graia-saya==0.0.17
-graia-scheduler==0.1.4
+graia-scheduler==0.1.5
 Pillow==9.5.0
 pypinyin==0.48.0
 PyYAML==6.0
