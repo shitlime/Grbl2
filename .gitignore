@@ -5,4 +5,5 @@ grbl_config.yaml
 debug_temp.jpg
 __pycache__
 .vscode
-resources/*
+resources/font/*
+resources/search_char/private/*

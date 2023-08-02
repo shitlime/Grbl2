@@ -1,0 +1,3 @@
+[submodule "resources/search_char/public/cjk_split"]
+	path = resources/search_char/public/cjk_split
+	url = https://github.com/asgsdbrseg/cjk_split
