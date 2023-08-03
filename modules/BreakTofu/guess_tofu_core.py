@@ -293,8 +293,8 @@ class GuessTofu():
         # 确定切割后子图的大小
         # sub_width = math.ceil(width / x)
         # sub_height = math.ceil(height / y)
-        sub_width = width / x
-        sub_height = height / y
+        sub_width = width // x
+        sub_height = height // y
 
         # 切割为四个子图
         sub_images = []
