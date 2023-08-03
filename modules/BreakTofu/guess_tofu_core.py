@@ -126,6 +126,7 @@ class GuessTofu():
                 random.randint(5, 8),
                 0.7
             )
+            self.shuff_rule = (3, 3)
         elif level==9:
             self.mask_rule = self.random_mask_rule2(
                 100, 100, 0.9
@@ -290,8 +291,10 @@ class GuessTofu():
         width, height = input_img.size
         
         # 确定切割后子图的大小
-        sub_width = math.ceil(width / x)
-        sub_height = math.ceil(height / y)
+        # sub_width = math.ceil(width / x)
+        # sub_height = math.ceil(height / y)
+        sub_width = width / x
+        sub_height = height / y
 
         # 切割为四个子图
         sub_images = []
