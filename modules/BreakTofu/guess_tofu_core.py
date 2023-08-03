@@ -231,9 +231,18 @@ class GuessTofu():
 
 
     def img_generator(self) -> Image:
-        if self.img_shuffled == None:
+        # 打乱顺序（一局游戏只进行一次）
+        if self.shuff_rule != None and self.img_shuffled == None:
             self.shuffle_img(self.img)
-        self.mask_img(self.img_shuffled)
+        
+        # 放置遮挡块
+        if self.mask_rule != None:
+            if self.img_shuffled != None:
+                self.mask_img(self.img_shuffled)
+            else:
+                self.mask_img(self.img)
+        
+        # 返回最终生成的图片
         if self.img_masked != None:
             return self.img_masked
         elif self.img_shuffled != None:
@@ -246,8 +255,6 @@ class GuessTofu():
         """
         按self.mask_rule设置遮挡块到self.img_masked
         """
-        # 无遮挡规则
-        if self.mask_rule is None: return
         # 复制一份
         self.img_masked = input_img.copy()
 
@@ -277,8 +284,6 @@ class GuessTofu():
         """
         按self.shuff_rule设置打乱规则
         """
-        # 无遮挡规则
-        if self.shuff_rule is None: return
         # 获取规则(x,y)
         x = self.shuff_rule[0]
         y = self.shuff_rule[1]
@@ -304,7 +309,7 @@ class GuessTofu():
         random.shuffle(sub_images)
         
         # 创建新的画布，用于组合子图
-        self.img_shuffled = Image.new(input_img.mode, (width, height))
+        self.img_shuffled = Image.new(input_img.mode, (width, height), (0xff, 0xff, 0xff))
         
         # 将打乱后的子图按顺序粘贴到新画布上
         for i in range(y):
