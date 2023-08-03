@@ -16,7 +16,7 @@ class GuessTofu():
     3. 减少遮挡
         调用后顺序减少(mask_rule_reduce)或随机减少(mask_rule_reduce2)遮挡块
     """
-    COMPETE_MAX_LEVEL = 6
+    COMPETE_MAX_LEVEL = 8
 
     def __init__(self, level: int, char_range=[]) -> str:
         """
@@ -50,6 +50,9 @@ class GuessTofu():
         # 被遮挡的豆腐块图片
         self.img_masked = None
 
+        # 被打乱的豆腐块图片
+        self.img_shuffled = None
+
         # 总分数
         self.score = 0
         
@@ -60,35 +63,35 @@ class GuessTofu():
         
         # 等级选择
         if level==0:
-            self.rule = self.random_mask_rule2(
+            self.mask_rule = self.random_mask_rule2(
                 random.randint(1, 10),
                 random.randint(1, 10)
             )
         elif level==1:
-            self.rule = self.random_mask_rule2(
+            self.mask_rule = self.random_mask_rule2(
                 random.randint(1, 2),
                 random.randint(1, 2)
             )
         elif level==2:
-            self.rule = self.random_mask_rule2(
+            self.mask_rule = self.random_mask_rule2(
                 random.randint(3, 4),
                 random.randint(3, 4),
                 0.6
             )
         elif level==3:
-            self.rule = self.random_mask_rule2(
+            self.mask_rule = self.random_mask_rule2(
                 random.randint(5, 6),
                 random.randint(5, 6),
                 0.7
             )
         elif level==4:
-            self.rule = self.random_mask_rule2(
+            self.mask_rule = self.random_mask_rule2(
                 random.randint(6, 10),
                 random.randint(6, 10),
                 0.8
             )
         elif level==5:
-            self.rule = [
+            self.mask_rule = [
                 [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],    # 1
                 [0, 1, 1, 1, 1, 1, 1, 1, 1, 0],    # 2
                 [0, 1, 1, 1, 1, 1, 1, 1, 1, 0],    # 3
@@ -102,16 +105,32 @@ class GuessTofu():
             ]
             self.maxCount = 100
             sum = 0
-            for l in self.rule:
+            for l in self.mask_rule:
                 sum += l.count(1)
             self.maskCount = sum
             self.score = int((self.maskCount / self.maxCount) * ((self.level + 1) * 10)) + 1
         elif level==6:
-            self.rule = self.random_mask_rule2(
+            self.mask_rule = None
+            self.shuff_rule = (2, 2)  # 按 2 * 2 的矩阵打乱
+        elif level==7:
+            self.mask_rule = self.random_mask_rule2(
+                random.randint(5, 6),
+                random.randint(5, 6),
+                0.3
+            )
+            self.shuff_rule = (2, 2)
+        elif level==8:
+            self.mask_rule = self.random_mask_rule2(
+                random.randint(5, 8),
+                random.randint(5, 8),
+                0.7
+            )
+        elif level==9:
+            self.mask_rule = self.random_mask_rule2(
                 100, 100, 0.9
             )
-        elif level==7:
-            self.rule = self.random_mask_rule2(
+        elif level==10:
+            self.mask_rule = self.random_mask_rule2(
                 100, 100, 0.99
             )
 
@@ -179,11 +198,11 @@ class GuessTofu():
         Returns: True成功 False失败
         """
         y = 0
-        for r in self.rule:
+        for r in self.mask_rule:
             x = 0
             for b in r:
                 if b == 1:
-                    self.rule[y][x] = 0
+                    self.mask_rule[y][x] = 0
                     return True
                 x += 1
             y += 1
@@ -193,13 +212,13 @@ class GuessTofu():
         """
         随机去除一个遮挡块
         """
-        rnum = random.randint(0, len(self.rule) - 1)
-        bnum = random.randint(0, len(self.rule[0]) - 1)
-        while rnum < len(self.rule):
+        rnum = random.randint(0, len(self.mask_rule) - 1)
+        bnum = random.randint(0, len(self.mask_rule[0]) - 1)
+        while rnum < len(self.mask_rule):
             try:
                 # print(f"rnum={rnum}\tbnum={bnum}")
-                n = self.rule[rnum].index(1, bnum)
-                self.rule[rnum][n] = 0
+                n = self.mask_rule[rnum].index(1, bnum)
+                self.mask_rule[rnum][n] = 0
                 return
             except:
                 rnum += 1
@@ -209,17 +228,27 @@ class GuessTofu():
         self.score = int((self.maskCount / self.maxCount) * ((self.level + 1) * 10)) + 1
         return
 
-    def masker(self):
+
+    def img_generator(self) -> Image:
+        if self.img_shuffled == None:
+            self.shuffle_img(self.img)
+        self.mask_img(self.img_shuffled)
+        return self.img_masked
+
+
+    def mask_img(self, input_img):
         """
-        按self.rule设置遮挡块到self.img_masked
+        按self.mask_rule设置遮挡块到self.img_masked
         """
+        # 无遮挡规则
+        if self.mask_rule == None: return
         # 复制一份
-        self.img_masked = self.img.copy()
+        self.img_masked = input_img.copy()
 
         # 根据rule 制作遮挡块
         w, h = self.img_masked.size
-        row_count = len(self.rule)
-        column_count = len(self.rule[0])
+        row_count = len(self.mask_rule)
+        column_count = len(self.mask_rule[0])
         mask_block_width = math.ceil(w/column_count)
         mask_block_height = math.ceil(h/row_count)
         mask_block = Image.new("RGB", (mask_block_width, mask_block_height),
@@ -229,10 +258,48 @@ class GuessTofu():
 
         # 使用遮挡块
         y = 0
-        for r in self.rule:
+        for r in self.mask_rule:
             x = 0
             for b in r:
                 if b:
                     self.img_masked.paste(mask_block, (x, y))
                 x += mask_block_width
             y += mask_block_height
+
+
+    def shuffle_img(self, input_img):
+        """
+        按self.shuff_rule设置打乱规则
+        """
+        # 获取规则(x,y)
+        x = self.shuff_rule[0]
+        y = self.shuff_rule[1]
+        # 获取图片尺寸
+        width, height = input_img.size
+        
+        # 确定切割后子图的大小
+        sub_width = math.ceil(width / x)
+        sub_height = math.ceil(height / y)
+
+        # 切割为四个子图
+        sub_images = []
+        for i in range(y):
+            for j in range(x):
+                left = j * sub_width
+                upper = i * sub_height
+                right = left + sub_width
+                lower = upper + sub_height
+                sub_image = input_img.crop((left, upper, right, lower))
+                sub_images.append(sub_image)
+        
+        # 打乱子图的顺序
+        random.shuffle(sub_images)
+        
+        # 创建新的画布，用于组合子图
+        self.img_shuffled = Image.new(input_img.mode, (width, height))
+        
+        # 将打乱后的子图按顺序粘贴到新画布上
+        for i in range(y):
+            for j in range(x):
+                index = i * x + j
+                self.img_shuffled.paste(sub_images[index], (j * sub_width, i * sub_height))

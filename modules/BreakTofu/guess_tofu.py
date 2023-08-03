@@ -108,7 +108,6 @@ async def guess_tofu(app: Ariadne, target: Group|Friend,
     else:
         gt = GuessTofu(level)
     gt.set_img(await get_tofu_img(gt.tofu, fd_cache))
-    gt.masker()
 
     # 记录发送的提示性消息
     msg_list = []
@@ -122,7 +121,7 @@ async def guess_tofu(app: Ariadne, target: Group|Friend,
             Image(
                 data_bytes= await asyncio.to_thread(
                     image2bytes,
-                    gt.img_masked
+                    gt.img_generator()
                 )
             )
         )
@@ -180,11 +179,9 @@ async def guess_tofu(app: Ariadne, target: Group|Friend,
                 # 降低难度
                 if len(answer) == 2:
                     gt.mask_rule_reduce2()
-                    gt.masker()
                 else:
                     for i in range(int(answer[2:])):
                         gt.mask_rule_reduce2()
-                        gt.masker()
                 msg = await app.send_message(
                     target,
                     MessageChain(
@@ -192,7 +189,7 @@ async def guess_tofu(app: Ariadne, target: Group|Friend,
                         Image(
                             data_bytes= await asyncio.to_thread(
                                 image2bytes,
-                                gt.img_masked
+                                gt.img_generator()
                             )
                         )
                     )
@@ -283,7 +280,6 @@ async def guess_tofu_competition(app: Ariadne, events: GroupMessage):
         level = random.randint(0, GuessTofu.COMPETE_MAX_LEVEL)
         gt = GuessTofu(level)
         gt.set_img(await get_tofu_img(gt.tofu, fd_cache))
-        gt.masker()
         # 游戏流程（猜豆腐过程
         recovery_msg = []    # 回收消息
         #   开始
@@ -296,7 +292,7 @@ async def guess_tofu_competition(app: Ariadne, events: GroupMessage):
                 Image(
                     data_bytes= await asyncio.to_thread(
                         image2bytes,
-                        gt.img_masked
+                        gt.img_generator()
                     )
                 )
             )
@@ -381,12 +377,10 @@ async def guess_tofu_competition(app: Ariadne, events: GroupMessage):
                     hint_count = 0
                     if len(answer) == 2:
                         gt.mask_rule_reduce2()
-                        gt.masker()
                         hint_count += 1
                     else:
                         for j in range(int(answer[2:])):
                             gt.mask_rule_reduce2()
-                            gt.masker()
                             hint_count += 1
                     msg = await app.send_message(
                         group,
@@ -395,7 +389,7 @@ async def guess_tofu_competition(app: Ariadne, events: GroupMessage):
                             Image(
                                 data_bytes= await asyncio.to_thread(
                                     image2bytes,
-                                    gt.img_masked
+                                    gt.img_generator()
                                 )
                             ),
                             Plain(f'本轮剩余分数：{gt.score}')
