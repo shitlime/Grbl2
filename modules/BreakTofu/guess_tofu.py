@@ -78,7 +78,7 @@ scroes = {}
         inline_dispatchers=[
             Twilight(
                 UnionMatch(['猜豆腐', '豆腐块游戏']),
-                "level" << UnionMatch([str(i) for i in range(8) ]),
+                "level" << UnionMatch([str(i) for i in range(10) ]),
                 "char_range" << RegexMatch(r"([0-9A-Fa-f]{1,8}-[0-9A-Fa-f]{1,8} ?)+", optional=True)
             )
         ],
