@@ -190,7 +190,6 @@ class GuessTofu():
         设置初始img
         """
         self.img = img
-        self.img_masked = self.img.copy()
 
     def mask_rule_reduce(self):
         """
