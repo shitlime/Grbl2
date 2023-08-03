@@ -49,9 +49,11 @@ class GuessTofu():
 
         # 被遮挡的豆腐块图片
         self.img_masked = None
+        self.mask_rule = None
 
         # 被打乱的豆腐块图片
         self.img_shuffled = None
+        self.shuff_rule = None
 
         # 总分数
         self.score = 0
@@ -110,7 +112,6 @@ class GuessTofu():
             self.maskCount = sum
             self.score = int((self.maskCount / self.maxCount) * ((self.level + 1) * 10)) + 1
         elif level==6:
-            self.mask_rule = None
             self.shuff_rule = (2, 2)  # 按 2 * 2 的矩阵打乱
         elif level==7:
             self.mask_rule = self.random_mask_rule2(
@@ -233,7 +234,12 @@ class GuessTofu():
         if self.img_shuffled == None:
             self.shuffle_img(self.img)
         self.mask_img(self.img_shuffled)
-        return self.img_masked
+        if self.img_masked != None:
+            return self.img_masked
+        elif self.img_shuffled != None:
+            return self.img_shuffled
+        else:
+            return self.img
 
 
     def mask_img(self, input_img):
@@ -241,7 +247,7 @@ class GuessTofu():
         按self.mask_rule设置遮挡块到self.img_masked
         """
         # 无遮挡规则
-        if self.mask_rule == None: return
+        if self.mask_rule is None: return
         # 复制一份
         self.img_masked = input_img.copy()
 
@@ -271,6 +277,8 @@ class GuessTofu():
         """
         按self.shuff_rule设置打乱规则
         """
+        # 无遮挡规则
+        if self.shuff_rule is None: return
         # 获取规则(x,y)
         x = self.shuff_rule[0]
         y = self.shuff_rule[1]
