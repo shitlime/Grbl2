@@ -198,6 +198,8 @@ class GuessTofu():
 
         Returns: True成功 False失败
         """
+        if self.mask_rule == None: return
+
         y = 0
         for r in self.mask_rule:
             x = 0
@@ -213,6 +215,8 @@ class GuessTofu():
         """
         随机去除一个遮挡块
         """
+        if self.mask_rule == None: return
+
         rnum = random.randint(0, len(self.mask_rule) - 1)
         bnum = random.randint(0, len(self.mask_rule[0]) - 1)
         while rnum < len(self.mask_rule):
