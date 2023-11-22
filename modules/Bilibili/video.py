@@ -54,11 +54,29 @@ async def get_video_info(string: str) -> dict | None:
         try:
             info = await v.get_info()
             # 打印信息
-            print(str(info)[:3000])
+            print(str(info)[:1000])
             return info
         except:
             print("获取视频信息出错了")
 
+async def get_video_ai_conclusion(string: str) -> dict:
+    # 输入信息
+    url = await get_url(string)
+    id = get_video_id(url)
+    # 实例化 Video 类
+    if id != None:
+        v = get_video(id)
+        # 获取信息
+        try:
+            cid = list(await v.get_pages())[0]['cid']
+            ai_conclusion = await v.get_ai_conclusion(cid)
+            # 打印信息
+            print(str(ai_conclusion)[:1000])
+            return ai_conclusion
+        except:
+            print("获取视频AI总结出错了")
+
 if __name__ == '__main__':
     string = input("输入视屏链接：")
-    asyncio.get_event_loop().run_until_complete(get_video_info(string))
+    # asyncio.get_event_loop().run_until_complete(get_video_info(string))
+    asyncio.get_event_loop().run_until_complete(get_video_ai_conclusion(string))
