@@ -66,16 +66,24 @@ async def get_video_ai_conclusion_quote(app: Ariadne, target: Group | Friend, so
     if ai_conclusion:
         summary = ai_conclusion['model_result']['summary']
         outline = []
-        for i, part in enumerate(ai_conclusion['model_result']['outline']):
-            outline.append(f"【{i+1}】{part['title']}")
+        if ai_conclusion['model_result']['outline']:
+            for i, part in enumerate(ai_conclusion['model_result']['outline']):
+                outline.append(f"【{i+1}】{part['title']}")
         outline = '\n'.join(outline)
 
     # 发送消息
-    if summary and outline:
+    if summary or outline:
         await app.send_message(
             target,
             MessageChain(
                 Plain(f"【总结】：{summary}\n"),
                 Plain(f"{outline}\n")
+            ),
+        )
+    else:
+        await app.send_message(
+            target,
+            MessageChain(
+                Plain(f"该视频没有AI总结喵~")
             ),
         )
