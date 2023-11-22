@@ -1,6 +1,7 @@
 python -m pip install pipx
 pipx install pdm
 pipx upgrade-all
+pdm sync
 
 cp bot_config.yaml grbl_config.yaml
 # 尝试运行120s后退出，若时长120s，返回0；若不足120s，返回不为0
