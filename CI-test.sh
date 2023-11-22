@@ -1,7 +1,12 @@
+# 1. 安装pdm
 python -m pip install pipx
 pipx install pdm
 pipx upgrade-all
 
+# 2. 安装依赖
+pdm sync
+
+# 3. 运行项目
 cp bot_config.yaml grbl_config.yaml
 # 尝试运行120s后退出，若时长120s，返回0；若不足120s，返回不为0
 timeout 120s pdm run ./bot.py

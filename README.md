@@ -63,6 +63,11 @@ cd Grbl2
 pip install -r requirements.txt
 ```
 
+**或** 使用 `pdm` 包管理器运行
+
+```shell
+pdm sync
+```
 
 2. 运行Bot
 
@@ -74,6 +79,11 @@ bot.py
 * Linux：
 ```shell
 python3 ./bot.py
+```
+
+* 使用 `pdm` ：
+```shell
+pdm run bot.py
 ```
 
 
