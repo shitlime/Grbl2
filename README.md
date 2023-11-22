@@ -28,7 +28,7 @@ cd Grbl2
 
 2. 获取Python3镜像
 ```
-docker pull python
+docker pull python:3.10.7
 ```
 
 3. 构建Grbl2镜像
