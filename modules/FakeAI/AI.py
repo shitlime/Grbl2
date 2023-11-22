@@ -10,16 +10,16 @@ from graia.saya.builtins.broadcast.schema import ListenerSchema
 
 
 channel = Channel.current()
-channel.name("人工“智能”")
-channel.author("Shitlime")
-channel.description("""
+channel.meta["name"]="人工“智能”"
+channel.meta["author"]="Shitlime"
+channel.meta["description"]="""
 价值1——的人工智能
 谨慎使用，很有可能会与其他模块冲突
 
 功能： “智能”回复好友消息
 使用方法： 在saya中导入
 saya.require("modules.AI")
-""")
+"""
 
 @channel.use(ListenerSchema(listening_events=[FriendMessage], decorators=[DetectSuffix(["?", "？", "吗", "呢"])]))
 async def ai(app: Ariadne, friend: Friend, message: MessageChain):

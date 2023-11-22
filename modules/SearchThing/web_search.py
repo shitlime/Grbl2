@@ -21,15 +21,15 @@ from graia.ariadne.message.parser.twilight import(
 )
 
 channel = Channel.current()
-channel.name("网络搜索")
-channel.author("Shitlime")
-channel.description("""
+channel.meta["name"]="网络搜索"
+channel.meta["author"]="Shitlime"
+channel.meta["description"]="""
 网络搜索模块
 
 功能：根据查找条件回复搜索引擎地址/搜索结果
 使用方法：在saya中导入
 saya.require("modules.web_search")
-""")
+"""
 #配置：
 #命令配置：
 #查找参数：

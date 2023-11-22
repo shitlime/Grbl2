@@ -15,9 +15,9 @@ from graia.saya.builtins.broadcast.schema import ListenerSchema
 from graia.ariadne.event.message import FriendMessage, GroupMessage
 
 channel = Channel.current()
-channel.name("涩图")
-channel.author("Shitlime")
-channel.description("""
+channel.meta["name"]="涩图"
+channel.meta["author"]="Shitlime"
+channel.meta["description"]="""
 涩图模块·假
 
 说明： 参考了Abot(https://github.com/djkcyl/ABot-Graia)
@@ -25,7 +25,7 @@ channel.description("""
 功能： 绘制涩图并发送（
 使用方法： 在saya中导入
 saya.require("modules.SeTu")
-""")
+"""
 #读取配置
 config = BOT.get_modules_config('SeTu')
 cool_down_time = config['cool_down_time']

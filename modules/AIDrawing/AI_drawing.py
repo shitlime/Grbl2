@@ -28,16 +28,16 @@ from graia.ariadne.message.parser.twilight import(
 )
 
 channel = Channel.current()
-channel.name("AI画图")
-channel.author("Shitlime")
-channel.description("""
+channel.meta["name"]="AI画图"
+channel.meta["author"]="Shitlime"
+channel.meta["description"]="""
 AI画图模块
 
 功能
 1.画出自己的自画像
 2.以tags画图
 3.以图画图
-""")
+"""
 #读取配置
 config = BOT.get_modules_config('AI_drawing')
 

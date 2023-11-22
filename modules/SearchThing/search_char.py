@@ -27,16 +27,16 @@ from graia.ariadne.message.parser.twilight import(
 )
 
 channel = Channel.current()
-channel.name("字符查找")
-channel.author("Shitlime")
-channel.description("""
+channel.meta["name"]="字符查找"
+channel.meta["author"]="Shitlime"
+channel.meta["description"]="""
 字符查找模块
 （查字模块）
 
 功能： 根据查找条件查找字符信息并回复
 使用方法： 在saya中导入
 saya.require("modules.search_char")
-""")
+"""
 #读取配置
 config = BOT.get_modules_config('search_char')
 

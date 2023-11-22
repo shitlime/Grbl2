@@ -29,13 +29,13 @@ from graia.ariadne.message.parser.twilight import(
 )
 
 channel = Channel.current()
-channel.name("猜豆腐块游戏")
-channel.author("Shitlime")
-channel.description("""
+channel.meta["name"]="猜豆腐块游戏"
+channel.meta["author"]="Shitlime"
+channel.meta["description"]="""
 猜豆腐块游戏
 
 说明： 字体文件来自 天珩全字库(TH-Tshyn)(http://cheonhyeong.com/Simplified/download.html)
-""")
+"""
 
 # ===== 全局变量 =====
 # fd_cache:

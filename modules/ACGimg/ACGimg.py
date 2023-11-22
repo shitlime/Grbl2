@@ -22,14 +22,14 @@ from graia.ariadne.message.parser.twilight import(
 )
 
 channel = Channel.current()
-channel.name("ACG图片")
-channel.author("Shitlime")
-channel.description("""
+channel.meta["name"]="ACG图片"
+channel.meta["author"]="Shitlime"
+channel.meta["description"]="""
 ACG图片模块
 
 功能：发送ACG图片
 （AI画图无法使用时期的产物/代替品）
-""")
+"""
 #读取配置
 config = BOT.get_modules_config('ACGimg')
 

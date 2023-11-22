@@ -25,14 +25,14 @@ from graia.ariadne.message.parser.twilight import(
 )
 
 channel = Channel.current()
-channel.name("获取机器ip")
-channel.author("Shitlime")
-channel.description("""
+channel.meta["name"]="获取机器ip"
+channel.meta["author"]="Shitlime"
+channel.meta["description"]="""
 获取机器的ip地址
 
 使用方法： 在saya中导入
 saya.require("modules.get_ip")
-""")
+"""
 
 re_get_ipv6_linux = re.compile(r'inet6 ([0-9a-f:]+)')
 re_get_ipv4_linux = re.compile(r'inet ([0-9\.]+)')

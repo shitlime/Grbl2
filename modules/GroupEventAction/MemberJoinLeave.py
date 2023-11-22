@@ -11,13 +11,13 @@ from graia.ariadne.event.mirai import MemberLeaveEventQuit, MemberJoinEvent
 from graia.saya.builtins.broadcast.schema import ListenerSchema
 
 channel = Channel.current()
-channel.name("群成员加入/离开时动作")
-channel.author("Shitlime")
-channel.description("""
+channel.meta["name"]="群成员加入/离开时动作"
+channel.meta["author"]="Shitlime"
+channel.meta["description"]="""
 群成员加入/离开时Bot的动作
 
 功能：群成员加入/离开时会发送消息
-""")
+"""
 
 config = BOT.get_modules_config("MemberJoinLeave")
 

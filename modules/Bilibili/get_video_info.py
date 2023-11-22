@@ -22,11 +22,11 @@ from graia.ariadne.message.parser.twilight import(
 )
 
 channel = Channel.current()
-channel.name("获取哔哩哔哩视频信息")
-channel.author("Shitlime")
-channel.description("""
+channel.meta["name"]="获取哔哩哔哩视频信息"
+channel.meta["author"]="Shitlime"
+channel.meta["description"]="""
 根据BV号或av号，获取哔哩哔哩视频信息
-""")
+"""
 
 # ==== 配置 ====
 keyword = ["解析", "bili"]

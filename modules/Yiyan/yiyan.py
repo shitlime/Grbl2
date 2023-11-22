@@ -24,16 +24,16 @@ from graia.ariadne.message.parser.twilight import(
 )
 
 channel = Channel.current()
-channel.name("一言")
-channel.author("Shitlime")
-channel.description("""
+channel.meta["name"]="一言"
+channel.meta["author"]="Shitlime"
+channel.meta["description"]="""
 一言模块
 
 功能： 获取一言并发送
 使用方法： 在saya中导入
 saya.require("modules.yiyan")
 触发配置： 下方的get_f、get_g中输入
-""")
+"""
 #配置：
 # =====触发机制=====
 #好友发送消息

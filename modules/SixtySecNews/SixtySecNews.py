@@ -21,13 +21,13 @@ from graia.ariadne.message.parser.twilight import(
 )
 
 channel = Channel.current()
-channel.name("定时发送60秒看世界新闻")
-channel.author("Shitlime")
-channel.description("""
+channel.meta["name"]="定时发送60秒看世界新闻"
+channel.meta["author"]="Shitlime"
+channel.meta["description"]="""
 定时发送60秒看世界新闻
 
 功能：每天在设定的时间发送60秒看世界的新闻
-""")
+"""
 
 config = BOT.get_modules_config("SixtySecNews")
 

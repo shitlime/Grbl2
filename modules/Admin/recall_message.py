@@ -20,11 +20,11 @@ from graia.ariadne.message.parser.twilight import(
 )
 
 channel = Channel.current()
-channel.name("撤回消息")
-channel.description("""
+channel.meta["name"]="撤回消息"
+channel.meta["description"]="""
 让Bot撤回自己已经发送的消息
 由于只有群组消息才有必要撤回，这里特指群组消息
-""")
+"""
 
 # 配置：
 key_word = ["remsg", "recall message", "撤回"]

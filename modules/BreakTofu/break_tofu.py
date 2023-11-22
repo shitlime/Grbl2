@@ -26,9 +26,9 @@ from graia.ariadne.message.parser.twilight import(
 )
 
 channel = Channel.current()
-channel.name("打碎豆腐块")
-channel.author("Shitlime")
-channel.description("""
+channel.meta["name"]="打碎豆腐块"
+channel.meta["author"]="Shitlime"
+channel.meta["description"]="""
 打碎豆腐块
 破解豆腐块
 
@@ -37,7 +37,7 @@ channel.description("""
 功能： 用全字库渲染豆腐块并发送
 使用方法： 在saya中导入
 saya.require("modules.break_tofu")
-""")
+"""
 
 # 配置
 # 触发关键：

@@ -11,13 +11,13 @@ from graia.ariadne.event.mirai import GroupNameChangeEvent, MemberCardChangeEven
 from graia.saya.builtins.broadcast.schema import ListenerSchema
 
 channel = Channel.current()
-channel.name("群内资料改变时动作")
-channel.author("Shitlime")
-channel.description("""
+channel.meta["name"]="群内资料改变时动作"
+channel.meta["author"]="Shitlime"
+channel.meta["description"]="""
 群名称改变时Bot的动作
 
 功能：群名称改变时会发送消息
-""")
+"""
 
 config = BOT.get_modules_config("InfosChange")
 

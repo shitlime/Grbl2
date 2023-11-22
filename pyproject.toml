@@ -1,0 +1,22 @@
+[project]
+name = ""
+version = ""
+description = ""
+authors = [
+    {name = "shitlime", email = "fwshitlime@outlook.com"},
+]
+dependencies = [
+    "graia-ariadne>=0.11.7",
+    "graia-broadcast>=0.23.3",
+    "graia-saya>=0.0.19",
+    "graia-scheduler>=0.2.0",
+    "Pillow>=10.0.1",
+    "pypinyin>=0.49.0",
+    "PyYAML>=6.0.1",
+    "fonttools>=4.45.0",
+    "bilibili-api-python>=16.1.1",
+]
+requires-python = ">=3.10"
+readme = "README.md"
+license = {text = "MIT"}
+
