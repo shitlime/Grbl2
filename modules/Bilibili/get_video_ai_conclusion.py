@@ -29,7 +29,7 @@ channel.meta["description"]="""
 """
 
 # ==== 配置 ====
-keyword = ["AI总结", "aibili"]
+keyword = ["AI总结", "ai总结", "aibl"]
 # ==== End ====
 
 @channel.use(
@@ -61,15 +61,17 @@ async def get_video_ai_conclusion_quote(app: Ariadne, target: Group | Friend, so
         return
     # 获取视屏信息
     ai_conclusion = await get_video_ai_conclusion(string)
+
+    # 取出总结、大纲
     if ai_conclusion:
-        # 取出总结、大纲
         summary = ai_conclusion['model_result']['summary']
         outline = []
         for i, part in enumerate(ai_conclusion['model_result']['outline']):
-            outline.append(f"【{i}】{part['title']}")
+            outline.append(f"【{i+1}】{part['title']}")
         outline = '\n'.join(outline)
 
-        # 发送消息
+    # 发送消息
+    if summary and outline:
         await app.send_message(
             target,
             MessageChain(

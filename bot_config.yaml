@@ -38,6 +38,7 @@ modules:
   - "modules.SixtySecNews.SixtySecNews"
   - "modules.BreakTofu.guess_tofu"
   - "modules.Bilibili.get_video_info"
+  - "modules.Bilibili.get_video_ai_conclusion"
 
 modules_config:
   message_queue:
