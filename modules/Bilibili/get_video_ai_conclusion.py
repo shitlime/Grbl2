@@ -63,9 +63,10 @@ async def get_video_ai_conclusion_quote(app: Ariadne, target: Group | Friend, so
     ai_conclusion = await get_video_ai_conclusion(string)
 
     # 取出总结、大纲
+    summary = ""
+    outline = []
     if ai_conclusion:
         summary = ai_conclusion['model_result']['summary']
-        outline = []
         if ai_conclusion['model_result']['outline']:
             for i, part in enumerate(ai_conclusion['model_result']['outline']):
                 outline.append(f"【{i+1}】{part['title']}")
@@ -76,7 +77,7 @@ async def get_video_ai_conclusion_quote(app: Ariadne, target: Group | Friend, so
         await app.send_message(
             target,
             MessageChain(
-                Plain(f"【总结】：{summary}\n"),
+                Plain(f"【总结】{summary}\n"),
                 Plain(f"{outline}\n")
             ),
         )
