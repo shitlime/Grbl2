@@ -31,8 +31,8 @@ class GuessTofu():
         cjk_b = (0x20000, 0x2A6DF)  # 扩B
         cjk_c = (0x2A700, 0x2B739)  # 扩C
         cjk_d = (0x2B740, 0x2B81D)  # 扩D
-        cjk_e = (0x2B820, 0x2CEAF)  # 扩E
-        cjk_f = (0x2CEB0, 0x2EBEF)  # 扩F
+        cjk_e = (0x2B820, 0x2CEA1)  # 扩E  结束于 0x2CEAF 当前未满
+        cjk_f = (0x2CEB0, 0x2EBE0)  # 扩F  结束于 0x2EBEF 当前未满
         cjk_g = (0x30000, 0x3134A)  # 扩G
         cjk_h = (0x31350, 0x323AF)  # 扩H
         cjk_i = (0x2EBF0, 0x2EE5D)  # 扩I
