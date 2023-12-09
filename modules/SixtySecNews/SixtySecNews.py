@@ -3,6 +3,7 @@ import asyncio
 from bot_init import BOT
 from modules.base.message_queue import MessageQueue
 from .get_60s_news import get_news_img
+from .get_moyu_calendar import get_calendar_img
 from ..base.check import check_member, check_friend
 
 from graia.saya import Channel
@@ -41,6 +42,7 @@ send_time = config["send_time"]    # 遵循crontab的方式 例：'30 15 * * *'�
 async def send_news_img(app: Ariadne):
     i = 0
     news_img = await get_news_img()
+    calendar_img = await get_calendar_img()
     # 遇到错误将隔30s重试
     while type(news_img) != bytes and i < 16:
         print(f"请求新闻图片失败，错误码{news_img}，重试{i}…")
@@ -52,6 +54,7 @@ async def send_news_img(app: Ariadne):
             await app.send_group_message(
                 target=group_num,
                 message= MessageChain(
+                    Image(base64=calendar_img),
                     Image(base64=news_img),
                     Plain("请收好，这是今日份的报纸哦")
                 )
@@ -60,6 +63,7 @@ async def send_news_img(app: Ariadne):
             await app.send_friend_message(
                 target=friend_num,
                 message= MessageChain(
+                    Image(base64=calendar_img),
                     Image(base64=news_img),
                     Plain("请收好，这是今日份的报纸哦")
                 )
