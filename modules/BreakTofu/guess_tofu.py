@@ -267,7 +267,7 @@ async def guess_tofu_competition(app: Ariadne, events: GroupMessage):
             Plain('【猜豆腐竞赛】\n'),
             Plain('规则：1.在每一轮中发送图中的可能被遮挡的文字\n'),
             Plain('2.得分按该轮的等级计算\n'),
-            Plain('3.超过一分钟未回应，该轮结束\n'),
+            Plain('3.超过一分钟未回应，结束竞赛\n'),
             Plain('4.提示或答错都会扣除分数\n'),
             Plain('5.喵喵~喵喵喵喵喵喵喵喵！\n')
         )
@@ -405,13 +405,12 @@ async def guess_tofu_competition(app: Ariadne, events: GroupMessage):
             # 如果是提示/答错，则继续游戏
             answer = await FunctionWaiter(waiter, [GroupMessage]).wait(timeout=60, default=3)    # 超时3
 
-        # 一轮结束（重置一些变量，延时5秒撤回多余的消息
+        # 一轮结束
+        # 1. 延时5秒撤回多余的消息
         if i < (rounds - 1):
             msg = await app.send_message(group, MessageChain("即将开始下一轮……"))
             recovery_msg.append(msg)
             await asyncio.sleep(4)
-        del gt
-        del answer
         for msg in recovery_msg:
             try:
                 await app.recall_message(msg)
