@@ -16,7 +16,7 @@ class GuessTofu():
     3. 减少遮挡
         调用后顺序减少(mask_rule_reduce)或随机减少(mask_rule_reduce2)遮挡块
     """
-    COMPETE_MAX_LEVEL = 8
+    COMPETITION_LEVEL = (0, 1, 2, 3, 4, 7, 8)
 
     def __init__(self, level: int, char_range=[]) -> str:
         """

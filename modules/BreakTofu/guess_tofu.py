@@ -274,10 +274,10 @@ async def guess_tofu_competition(app: Ariadne, events: GroupMessage):
     )
     await asyncio.sleep(3)
     # 循环（5次
-    rounds = 5
+    rounds = 10
     for i in range(rounds):
         # 生成猜豆腐游戏（初始化
-        level = random.randint(0, GuessTofu.COMPETE_MAX_LEVEL)
+        level = random.choices(gt.COMPETITION_LEVEL)
         gt = GuessTofu(level)
         gt.set_img(await get_tofu_img(gt.tofu, fd_cache))
         # 游戏流程（猜豆腐过程
@@ -435,7 +435,7 @@ async def guess_tofu_competition(app: Ariadne, events: GroupMessage):
                     )
                 )
             )
-            break
+            break    # for
 
     # 竞赛结束，输出得分排行榜（循环结束，解除单例
     result = ""
