@@ -277,7 +277,7 @@ async def guess_tofu_competition(app: Ariadne, events: GroupMessage):
     rounds = 10
     for i in range(rounds):
         # 生成猜豆腐游戏（初始化
-        level = random.choices(GuessTofu.COMPETITION_LEVEL)
+        level = random.choice(GuessTofu.COMPETITION_LEVEL)
         gt = GuessTofu(level)
         gt.set_img(await get_tofu_img(gt.tofu, fd_cache))
         # 游戏流程（猜豆腐过程
