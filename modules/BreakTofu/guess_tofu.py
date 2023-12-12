@@ -398,27 +398,13 @@ async def guess_tofu_competition(app: Ariadne, events: GroupMessage):
                     recovery_msg.append(msg)
                     # 提示扣题目分
                     return 2    # 降低难度2
+
         answer = None
-        while answer not in [0, -1]:
+        # 如果是-1（退出），0（猜对），3（超时）本轮结束
+        while answer not in [-1, 0, 3]:
             # 如果是提示/答错，则继续游戏
-            answer = await FunctionWaiter(waiter, [GroupMessage]).wait(timeout=60)
-            if answer is None:
-                # 超时
-                await app.send_message(
-                    group,
-                    MessageChain(
-                        Plain('哼 哼 时间到了喵~↑\n'),
-                        Plain('由于没有猜出答案，覌白获得了胜利喵~↑\n'),
-                        Plain(f'正确答案：【{gt.tofu}】'),
-                        Image(
-                            data_bytes= await asyncio.to_thread(
-                                image2bytes,
-                                gt.img
-                            )
-                        )
-                    )
-                )
-                break
+            answer = await FunctionWaiter(waiter, [GroupMessage]).wait(timeout=60, default=3)    # 超时3
+
         # 一轮结束（重置一些变量，延时5秒撤回多余的消息
         if i < (rounds - 1):
             msg = await app.send_message(group, MessageChain("即将开始下一轮……"))
@@ -431,6 +417,27 @@ async def guess_tofu_competition(app: Ariadne, events: GroupMessage):
                 await app.recall_message(msg)
             except:
                 pass
+        
+        # 超时
+        # 1. 发布结果
+        # 2. 结束竞赛
+        if answer == 3:
+            await app.send_message(
+                group,
+                MessageChain(
+                    Plain('哼 哼 时间到了喵~↑\n'),
+                    Plain('由于没有猜出答案，覌白获得了胜利喵~↑\n'),
+                    Plain(f'正确答案：【{gt.tofu}】'),
+                    Image(
+                        data_bytes= await asyncio.to_thread(
+                            image2bytes,
+                            gt.img
+                        )
+                    )
+                )
+            )
+            break
+
     # 竞赛结束，输出得分排行榜（循环结束，解除单例
     result = ""
     for p, s in scroes.items():
