@@ -474,7 +474,7 @@ async def guess_tofu_endless(app: Ariadne, target: Group,
     await app.send_message(
         target,
         MessageChain(
-            Plain(f'【猜豆腐游戏-无尽模式】-等级{level}\n'),
+            Plain(f'【猜豆腐-无尽模式】-等级{level}\n'),
             Plain(f'规则：🏳️✖️喵! 喵喵?喵喵喵喵!\n')
         )
     )
@@ -656,7 +656,7 @@ async def guess_tofu_endless(app: Ariadne, target: Group,
     await app.send_message(
         target,
         MessageChain(
-            Plain("【猜豆腐游戏-无尽模式 结束】\n"),
+            Plain(f"【猜豆腐-无尽模式 结束】({round}轮)\n"),
             Plain(result)
         )
     )
