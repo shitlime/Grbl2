@@ -468,6 +468,8 @@ async def guess_tofu_competition(app: Ariadne, events: GroupMessage):
 )
 async def guess_tofu_endless(app: Ariadne, target: Group,
                      level: RegexResult, char_range: RegexResult):
+    # 预处理数据
+    level = int(level.result.display)
     # 竞赛介绍（规则说明
     await app.send_message(
         target,
@@ -483,7 +485,6 @@ async def guess_tofu_endless(app: Ariadne, target: Group,
         round += 1
         # 0. 生成猜豆腐游戏（初始化
         # 根据参数生成猜豆腐实例
-        level = int(level.result.display)
         if char_range.matched:
             char_range_list = []
             # 切分每个范围
