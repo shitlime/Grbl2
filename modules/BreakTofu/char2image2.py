@@ -1,8 +1,7 @@
 import os
 import io
-import math
-from PIL import Image, ImageFont, ImageDraw, ImageShow
-from fontTools.ttLib import TTFont, TTCollection
+from PIL import Image, ImageFont, ImageDraw
+from fontTools.ttLib import TTFont
 
 
 def char2image(
@@ -11,7 +10,8 @@ def char2image(
     offset=(20, 60, 30),
     background_color=(255, 255, 255),
     char_color=(0, 0, 0),
-    highlight_char_color=(99, 99, 99)  # 目前指定Unicode CJKV ExtI 为“高亮”. 取I（9）为颜色编码（十进制哦
+    #highlight_char_color=(99, 99, 99)  # 目前指定Unicode CJKV ExtI 为“高亮”. 取I（9）为颜色编码（十进制
+    highlight_char_color=(0, 0, 0)
     ):
     """
     string: 需要渲染的字符（串）
