@@ -73,3 +73,6 @@ modules_config:
     enable_group: [1145141919810]
     enable_friend: []
     send_time: "30 15 * * *" # 遵循crontab的方式 例：'30 15 * * *'表示每天的15:30
+  new_year:
+    enable_group: [1145141919810]
+    enable_friend: []
