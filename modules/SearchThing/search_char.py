@@ -191,10 +191,12 @@ def readtxt(path: str, name: str, mode: str ='rb'):#读取文本文件
     f.close()
     return s
 
-def dict_change(dict_str: str):#字典处理
+def dict_change(dict_str: str, column: list):#字典处理  column = [字（列序号）, 码（列序号）]
     dict_str = dict_str.replace('\r\n', '\n').replace('\r', '\n')
     lines = dict_str.split('\n')
     result = {}
+    char_column_num = column[0]
+    code_column_num = column[1]
     # 逐一取出行(l)，进行处理
     for l in lines:
         # “#”开头表示注释的行、len(l)=0空的行，都忽略
@@ -205,19 +207,19 @@ def dict_change(dict_str: str):#字典处理
         if len(l) < 2:
             # 如果不存在制表符，跳过本行
             continue
-        if l[0] in result:
+        if l[char_column_num] in result:
             # 如果字已经存在，添加新的码
-            result[l[0]].append(l[1])
+            result[l[char_column_num]].append(l[code_column_num])
         else:
             # 如果字不存在，添加字和码
-            result[l[0]] = [l[1]]
+            result[l[char_column_num]] = [l[code_column_num]]
     return result
 
-def load_dict(dict_path: str, dict_name: str):
+def load_dict(dict_path: str, dict_name: str, column = [0, 1]):
     print("装载字典……")
     try:
         dt_s = readtxt(dict_path, dict_name)
-        dt = dict_change(dt_s)
+        dt = dict_change(dt_s, column)
         print(f"{dict_name}装载完成！")
     except (Exception, RuntimeError) as e:
         print(f"加载{dict_name}字典时发生错误：{e}")
@@ -234,7 +236,7 @@ def find_char(dt: dict, ch: str):
 #码表型字典数据装载：
 dict_g = load_dict(dict_path, dict_g_name)#观星三拼
 dict_s = load_dict(dict_path, dict_s_name)#四角号码
-dict_f = load_dict(dict_path, dict_f_name)#飞梧
+dict_f = load_dict(dict_path, dict_f_name, column=[1, 2])#飞梧
 dict_n = load_dict(dict_path, dict_n_name)#凝
 
 # = = = = = 新函数开始 = = = = =
