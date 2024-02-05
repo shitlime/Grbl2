@@ -39,6 +39,7 @@ modules:
   - "modules.BreakTofu.guess_tofu"
   - "modules.Bilibili.get_video_info"
   - "modules.Bilibili.get_video_ai_conclusion"
+  - "modules.scheduler.new_year"
 
 modules_config:
   message_queue:
@@ -66,7 +67,9 @@ modules_config:
     cool_down_time: 6
     fqc_time: 120
   MemberJoinLeave:
-    enable_group: [1145141919810]
+    enable_group:
+      join: [1145141919810]
+      leave: [11451419]
   InfosChange:
     enable_group: [1145141919810]
   SixtySecNews:

@@ -22,13 +22,14 @@ channel.meta["description"]="""
 config = BOT.get_modules_config("MemberJoinLeave")
 
 # 配置：配置启用该功能的群
-enable_group = config["enable_group"]    # list
+enable_group_join = config["enable_group"]["join"]    # list
+enable_group_leave = config["enable_group"]["leave"]    # list
 
 # 群员离开：
 @channel.use(
     ListenerSchema(
         listening_events=[MemberLeaveEventQuit],
-        decorators=[check_group(enable_group)]
+        decorators=[check_group(enable_group_leave)]
     )
 )
 async def memberLeaveAction(app: Ariadne, member: Member):
@@ -51,7 +52,7 @@ async def memberLeaveAction(app: Ariadne, member: Member):
 @channel.use(
     ListenerSchema(
         listening_events=[MemberJoinEvent],
-        decorators=[check_group(enable_group)]
+        decorators=[check_group(enable_group_join)]
     )
 )
 async def memberJoinAction(app: Ariadne, member: Member):
