@@ -4,6 +4,7 @@ from bot_init import BOT
 from graia.saya import Channel
 from graia.scheduler import timers
 from graia.ariadne.app import Ariadne
+from graia.ariadne.model import Group
 from graia.scheduler.saya import SchedulerSchema
 from graia.ariadne.message.chain import MessageChain
 from graia.ariadne.message.element import Plain
@@ -25,13 +26,14 @@ enable_group = config["enable_group"]    # list
 @channel.use(SchedulerSchema(timer=timers.crontabify("11 0 * * *")))
 async def upload_trime_nightly(app: Ariadne):
     file_info = await get_all_file_info()
-    for file_name, file_url in file_info:
+    for file_name, file_url in file_info.items():
         data = await get_file_bytes(file_url)
-        path = f"同文原版（Nightly Build，每夜版）{datetime.datetime.today()}"
-        name = file_name + ".删后缀喵"
+        # path = f"同文原版（Nightly Build，每夜版）{datetime.datetime.today().date()}"
+        name = file_name # + ".删后缀喵"
         for group_num in enable_group:
+            group = await app.get_group(group_num)
             await app.upload_file(
                 data=data,
-                target=group_num,
-                path=path,
+                target=group,
+                path="",
                 name=name)
