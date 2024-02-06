@@ -24,7 +24,7 @@ enable_group = config["enable_group"]    # list
 
 @channel.use(SchedulerSchema(timer=timers.crontabify("11 0 * * *")))
 async def upload_trime_nightly(app: Ariadne):
-    file_info = get_all_file_info()
+    file_info = await get_all_file_info()
     for file_name, file_url in file_info:
         data = await get_file_bytes(file_url)
         path = f"同文原版（Nightly Build，每夜版）{datetime.datetime.today()}"
