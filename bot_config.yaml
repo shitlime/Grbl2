@@ -40,6 +40,7 @@ modules:
   - "modules.Bilibili.get_video_info"
   - "modules.Bilibili.get_video_ai_conclusion"
   - "modules.scheduler.new_year"
+  - "modules.scheduler.TrimeNightlyUpload.trime_nightly_upload"
 
 modules_config:
   message_queue:
@@ -79,3 +80,5 @@ modules_config:
   new_year:
     enable_group: [1145141919810]
     enable_friend: []
+  TrimeNightlyUpload:
+    enable_group: [1145141919810]
