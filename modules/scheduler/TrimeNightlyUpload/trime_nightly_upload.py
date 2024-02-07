@@ -11,7 +11,7 @@ from graia.ariadne.message.chain import MessageChain
 from graia.ariadne.message.element import Plain
 
 from .OutdatedAssetsException import OutdatedAssetsException
-from .get_trime_nightly import get_all_file_info, get_file_bytes
+from .get_trime_nightly import get_info, get_file_bytes
 
 channel = Channel.current()
 channel.meta["name"]="同文每夜构建"
@@ -28,11 +28,11 @@ enable_group = config["enable_group"]    # list
 @channel.use(SchedulerSchema(timer=timers.crontabify("3 0 * * *")))
 async def upload_trime_nightly(app: Ariadne):
     # 获取nightly build信息，每120s请求一次，最多60次
-    file_info = None
+    all_info = None
     count = 1
-    while file_info is None and count <= 60:
+    while all_info is None and count <= 60:
         try:
-            file_info = await get_all_file_info()
+            all_info = await get_info()
         except OutdatedAssetsException as e:
             print(f"{e.message} 第{count}次 120s后重新获取")
             await asyncio.sleep(120)
@@ -40,6 +40,8 @@ async def upload_trime_nightly(app: Ariadne):
             count += 1
 
     # 上传到群文件
+    file_info = all_info['assets']
+    body = all_info['body']
     for file_name, file_url in file_info.items():
         data = await get_file_bytes(file_url)
         path_pattern = r"同文原版.+Nightly.+"
@@ -58,3 +60,13 @@ async def upload_trime_nightly(app: Ariadne):
                         name=name)
                     print(f"{file_name}上传完成")
                     break
+
+    # 发送release body
+    for group_num in enable_group:
+        group = await app.get_group(group_num)
+        await app.send_message(
+            target=group,
+            message=MessageChain(
+                Plain(body)
+            )
+        )
