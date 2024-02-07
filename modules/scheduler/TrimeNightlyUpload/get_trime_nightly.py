@@ -3,7 +3,7 @@ import aiohttp
 import datetime
 import pytz
 
-from OutdatedAssetsException import OutdatedAssetsException
+from .OutdatedAssetsException import OutdatedAssetsException
 
 github_api_trime_release = "https://api.github.com/repos/osfans/trime/releases?prerelease=true"
 
@@ -25,7 +25,7 @@ async def get_nightly_download_link():
                 published_time = nightly['published_at']
                 utc_time = datetime.datetime.strptime(published_time, "%Y-%m-%dT%H:%M:%SZ")
                 time = pytz.timezone("Asia/Shanghai").fromutc(utc_time)
-                if time.date() != datetime.datetime.now().date() + datetime.timedelta(days=1):
+                if time.date() != datetime.datetime.now().date():
                     raise OutdatedAssetsException("不是今天的nightly build")
                 # 所有 release 文件信息
                 assets = nightly['assets']
