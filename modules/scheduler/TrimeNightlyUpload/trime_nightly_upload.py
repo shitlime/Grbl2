@@ -1,4 +1,4 @@
-import datetime
+import re
 
 from bot_init import BOT
 from graia.saya import Channel
@@ -28,12 +28,18 @@ async def upload_trime_nightly(app: Ariadne):
     file_info = await get_all_file_info()
     for file_name, file_url in file_info.items():
         data = await get_file_bytes(file_url)
-        # path = f"同文原版（Nightly Build，每夜版）{datetime.datetime.today().date()}"
-        name = file_name # + ".删后缀喵"
+        path_pattern = r"同文原版.+Nightly.+"
+        name = file_name  + ".删后缀喵"
         for group_num in enable_group:
             group = await app.get_group(group_num)
-            await app.upload_file(
-                data=data,
-                target=group,
-                path="",
-                name=name)
+
+            # 获取Trime Nightly存放的文件夹
+            async for fi in app.get_file_iterator(target=group):
+                if fi.is_directory == True and re.match(path_pattern, fi.name):
+                    # 上传文件
+                    await app.upload_file(
+                        data=data,
+                        target=group,
+                        path=fi.path,
+                        name=name)
+                    print(f"{file_name}上传完成")
