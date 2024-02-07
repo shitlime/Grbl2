@@ -44,8 +44,16 @@ async def get_file_bytes(url: str):
     """
     通过链接下载文件数据，返回bytes
     """
-    async with aiohttp.request("GET", url=url) as r:
-        return await r.read()
+    count = 1
+    while (count <= 60):
+        try:
+            async with aiohttp.request("GET", url=url) as r:
+                return await r.read()
+        except TimeoutError:
+            print(f"下载文件数据超时 第{count}次")
+            await asyncio.sleep(4)
+        finally:
+            count += 1
 
 async def test():
     info = await get_info()
