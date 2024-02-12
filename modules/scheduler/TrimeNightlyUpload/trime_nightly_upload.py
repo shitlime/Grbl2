@@ -49,7 +49,7 @@ async def upload_trime_nightly(app: Ariadne):
         # 重命名成 [日期]-[架构]-[commit次数]-[哈希]-[名称]-[r/d]
         regix_file_name = r"(trime-nightly)-(\d+)-g([a-f0-9]+)-(.+)-(release|debug).apk"
         file_name_groups = re.search(regix_file_name, file_name).groups()
-        name = "{}月{}日-{}-{}个改动-{}-{}-{}.删后缀喵".format(
+        name = "{}月{}日-{}-{}个改动-{}-{}-{}.apk.删后缀喵".format(
             datetime.datetime.now().month,    # 月
             datetime.datetime.now().day,      # 日
             file_name_groups[3],              # 架构
