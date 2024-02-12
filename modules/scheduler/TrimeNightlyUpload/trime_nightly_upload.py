@@ -1,4 +1,5 @@
 import re
+import datetime
 import asyncio
 
 from bot_init import BOT
@@ -45,7 +46,18 @@ async def upload_trime_nightly(app: Ariadne):
     for file_name, file_url in file_info.items():
         data = await get_file_bytes(file_url)
         path_pattern = r"同文原版.+Nightly.+"
-        name = file_name  + ".删后缀喵"
+        # 重命名成 [日期]-[架构]-[commit次数]-[哈希]-[名称]-[r/d]
+        regix_file_name = r"(trime-nightly)-(\d+)-g([a-f0-9]+)-(.+)-(release|debug).apk"
+        file_name_groups = re.search(regix_file_name, file_name).groups()
+        name = "{}月{}日-{}-{}个改动-{}-{}-{}.删后缀喵".format(
+            datetime.datetime.now().month,    # 月
+            datetime.datetime.now().day,      # 日
+            file_name_groups[3],              # 架构
+            file_name_groups[1],              # commit数
+            file_name_groups[2],              # 哈希
+            file_name_groups[0],              # 名称
+            file_name_groups[4],              # release/debug
+            )
         for group_num in enable_group:
             group = await app.get_group(group_num)
 
