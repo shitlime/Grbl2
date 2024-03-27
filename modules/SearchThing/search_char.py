@@ -12,7 +12,7 @@ from ..BreakTofu.break_tofu import break_tofu_cmd
 from graia.saya import Channel
 from graia.ariadne import Ariadne
 from graia.ariadne.model import Friend, Group, Member
-from graia.ariadne.message.element import At, Plain, Forward, ForwardNode
+from graia.ariadne.message.element import At, Plain, Image, Forward, ForwardNode
 from graia.ariadne.message.chain import MessageChain
 from graia.saya.builtins.broadcast.schema import ListenerSchema
 from graia.ariadne.event.message import FriendMessage, GroupMessage
@@ -55,6 +55,7 @@ dict_g_name = os.path.join("private", "tri_py_gxsp.dict-b3.yaml")
 dict_s_name = os.path.join("private", "sjhm.dict-b1.yaml")
 dict_f_name = os.path.join("public", "cjk_split", "全拆分.txt")
 dict_n_name = os.path.join("private", "new_tri_py_gxsp.txt")
+dict_bh_img_name = os.path.join("private", "stroke_order")
 
 #共用路径(根据系统设置不同路径)：
 if BOT.sys == 'Windows':
@@ -114,9 +115,11 @@ async def search_char_info(app: Ariadne, target: Group | Friend,
     # 飞梧2023-04-25
     elif search_mode in ["f", "飞", "飞梧"]:
         if len(search_char) == 1:
+            bh_img = find_img(dict_bh_img, search_char)
             re_msg = MessageChain(
                 Plain(f"【{search_char}】{getpinyin(search_char)} {hex(ord(search_char))}\n"),
-                Plain(f"[飞梧-拆字]{find_char(dict_f, search_char)}")
+                Plain(f"[飞梧-拆字]{find_char(dict_f, search_char)}"),
+                Image(path=bh_img) if bh_img != None else ""
             )
     # 啊凝
     elif search_mode in ["n", "凝"]:
@@ -233,11 +236,32 @@ def find_char(dt: dict, ch: str):
         return '404 NOT FOUND 喵~'
     return '或'.join(tb)
 
+def load_img_dict(dict_path: str, sub_path: str):
+    print("装载字典……")
+    dt_p = os.path.join(dict_path, sub_path)
+    dt = {}
+    try:
+        for name in os.listdir(dt_p):
+            key = os.path.splitext(name)[0]
+            value = os.path.join(dt_p, name)
+            dt[key] = value
+        print(f"{sub_path}装载完成！")
+    except (Exception, RuntimeError) as e:
+        print(f"加载{sub_path}字典时发生错误：{e}")
+    return dt
+
+def find_img(dt: dict, ch: str):
+    if not dt: return '未装载此字典'
+    return dt.get(ch)
+
 #码表型字典数据装载：
 dict_g = load_dict(dict_path, dict_g_name)#观星三拼
 dict_s = load_dict(dict_path, dict_s_name)#四角号码
 dict_f = load_dict(dict_path, dict_f_name, column=[1, 2])#飞梧
 dict_n = load_dict(dict_path, dict_n_name)#凝
+
+# 图片型字典数据装载：
+dict_bh_img = load_img_dict(dict_path, dict_bh_img_name)#笔画图片数据
 
 # = = = = = 新函数开始 = = = = =
 def unicodeInfo(c: str):
