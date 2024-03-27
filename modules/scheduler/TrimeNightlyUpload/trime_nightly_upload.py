@@ -44,8 +44,8 @@ async def upload_trime_nightly(app: Ariadne):
     file_info = all_info['assets']
     body = all_info['body']
     for file_name, file_url in file_info.items():
-        data = await get_file_bytes(file_url)
-        path_pattern = r"同文原版.+Nightly.+"
+        # data = await get_file_bytes(file_url)
+        # path_pattern = r"同文原版.+Nightly.+"
         # 重命名成 [日期]-[架构]-[commit次数]-[哈希]-[名称]-[r/d]
         regix_file_name = r"(trime-nightly)-(\d+)-g([a-f0-9]+)-(.+)-(release|debug).apk"
         file_name_groups = re.search(regix_file_name, file_name).groups()
@@ -60,25 +60,15 @@ async def upload_trime_nightly(app: Ariadne):
             )
         for group_num in enable_group:
             group = await app.get_group(group_num)
+            if group == None:
+                continue
 
-            # 获取Trime Nightly存放的文件夹
-            async for fi in app.get_file_iterator(target=group):
-                if fi.is_directory == True and re.match(path_pattern, fi.name):
-                    # 上传文件
-                    await app.upload_file(
-                        data=data,
-                        target=group,
-                        path=fi.path,
-                        name=name)
-                    print(f"{file_name}上传完成")
-                    break
-
-    # 发送release body
-    for group_num in enable_group:
-        group = await app.get_group(group_num)
-        await app.send_message(
-            target=group,
-            message=MessageChain(
-                Plain(body)
+            # 发送下崽链接
+            await app.send_message(
+                target=group,
+                message=MessageChain(
+                    Plain(f"{name} 下崽链接（建议复制使用浏览器打开）：\n"),
+                    Plain(f"【GitHub】{file_url}\n"),
+                    Plain(f"【代理加速】https://mirror.ghproxy.com/{file_url}")
+                )
             )
-        )
