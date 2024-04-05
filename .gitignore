@@ -7,3 +7,4 @@ __pycache__
 .vscode
 resources/font/*
 resources/search_char/private/*
+.pdm.toml
