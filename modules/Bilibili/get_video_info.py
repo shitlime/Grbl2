@@ -1,4 +1,4 @@
-from .video import get_video_info
+from .video import get_video_info, get_video
 
 from ..base.get_quote_message import get_quote_message
 from ..base.time2str import timestamp2str
@@ -18,6 +18,7 @@ from graia.ariadne.message.parser.twilight import(
     ElementMatch,
     WildcardMatch,
     SpacePolicy,
+    RegexMatch,
     RegexResult
 )
 
@@ -32,6 +33,47 @@ channel.meta["description"]="""
 keyword = ["解析", "bili"]
 # ==== End ====
 
+
+# 自动识别BV号
+@channel.use(
+    ListenerSchema(
+        listening_events=[GroupMessage, FriendMessage],
+        inline_dispatchers=[
+            Twilight(
+                WildcardMatch(),
+                "bvid" << RegexMatch(r"BV[0-9a-zA-Z]{10}"),
+                WildcardMatch(),
+            )
+        ]
+    )
+)
+async def get_video_info_auto(app: Ariadne, target: Group | Friend, bvid: RegexResult):
+    bvid = bvid.result.display
+    print(f"识别到消息中含有BV：{bvid}")
+    # 获取视屏信息
+    video = get_video(bvid)
+    info = await video.get_info()
+    if info:
+        # 发送消息
+        await app.send_message(
+            target,
+            MessageChain(
+                Plain(f"标题：{info.get('title')}\n"),
+                Image(url=info.get('pic')),
+                Plain(f"up主：{info.get('owner').get('name')}\n"),
+                Plain(f"分区：{info.get('tname')}\n"),
+                Plain(f"播放量：{info.get('stat').get('view')}"),
+                Plain(f"收藏：{info.get('stat').get('favorite')}\n"),
+                Plain(f"硬币：{info.get('stat').get('coin')}"),
+                Plain(f"点赞：{info.get('stat').get('like')}\n"),
+                Plain(f"投稿：{timestamp2str(info.get('pubdate'))}\n"),
+                Plain(f"简介：{info.get('desc')[:51]}\n"),
+                Plain(f"ID：{info.get('bvid')} av{info.get('aid')}\n")
+            ),
+        )
+
+
+# 回复式主动获取信息
 @channel.use(
     ListenerSchema(
         listening_events=[GroupMessage, FriendMessage],
@@ -70,9 +112,9 @@ async def get_video_info_quote(app: Ariadne, target: Group | Friend, source: Sou
                 Image(url=info.get('pic')),
                 Plain(f"up主：{info.get('owner').get('name')}\n"),
                 Plain(f"分区：{info.get('tname')}\n"),
-                Plain(f"播放量：{info.get('stat').get('view')}\n"),
+                Plain(f"播放量：{info.get('stat').get('view')}"),
                 Plain(f"收藏：{info.get('stat').get('favorite')}\n"),
-                Plain(f"硬币：{info.get('stat').get('coin')}\n"),
+                Plain(f"硬币：{info.get('stat').get('coin')}"),
                 Plain(f"点赞：{info.get('stat').get('like')}\n"),
                 Plain(f"投稿：{timestamp2str(info.get('pubdate'))}\n"),
                 Plain(f"简介：{info.get('desc')}\n"),
