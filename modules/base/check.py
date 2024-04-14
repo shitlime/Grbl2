@@ -1,5 +1,6 @@
 import asyncio
 from datetime import datetime
+from loguru import logger
 
 from graia.ariadne import Ariadne
 from graia.ariadne.message.chain import MessageChain
@@ -23,7 +24,7 @@ def cool_down(prev_time: datetime, second: int):
     second 延时的秒数\n
     """
     async def cool_down_time(app: Ariadne, target: Group | Friend):
-        print(prev_time)
+        logger.debug(f"prev_time={prev_time}")
         if prev_time == None:
             return
         elif get_delay(prev_time) < second:
@@ -52,7 +53,7 @@ def check_frequency(fqc_dict: dict, max_frequency: int):
     max_frequency: 允许的最大频率，单位：秒/次\n
     """
     async def check_frequency_deco(app: Ariadne, group: Group, member: Member):
-        print(f"fqc_dict={fqc_dict}")
+        logger.debug(f"fqc_dict={fqc_dict}")
         fqc = frequency(fqc_dict, member.id)
         if fqc == -1:    # 第一次的请求
             return

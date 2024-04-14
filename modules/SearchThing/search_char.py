@@ -4,6 +4,7 @@ import math
 import unicodedata
 from pypinyin import pinyin
 from datetime import datetime
+from loguru import logger
 
 from bot_init import BOT
 from modules.base.message_queue import MessageQueue
@@ -93,7 +94,7 @@ async def search_char_info(app: Ariadne, target: Group | Friend,
     # 查找的字符
     search_char = search_char.split(" | ")[0]
     re_msg = None
-    print(f"sm:{search_mode}, sc:{search_char}")
+    logger.info(f"search_mode:{search_mode}, search_char:{search_char}")
     #查观星三拼
     if search_mode in ["g", "G", "观", "观星三拼"]:
         re_msg_u = ""
@@ -219,13 +220,13 @@ def dict_change(dict_str: str, column: list):#字典处理  column = [字（列�
     return result
 
 def load_dict(dict_path: str, dict_name: str, column = [0, 1]):
-    print("装载字典……")
+    logger.info("加载字典……")
     try:
         dt_s = readtxt(dict_path, dict_name)
         dt = dict_change(dt_s, column)
-        print(f"{dict_name}装载完成！")
+        logger.info(f"{dict_name}加载完成！")
     except (Exception, RuntimeError) as e:
-        print(f"加载{dict_name}字典时发生错误：{e}")
+        logger.error(f"加载{dict_name}字典时发生错误：{e}")
         return None
     return dt
 
@@ -237,7 +238,7 @@ def find_char(dt: dict, ch: str):
     return '或'.join(tb)
 
 def load_img_dict(dict_path: str, sub_path: str):
-    print("装载字典……")
+    logger.info("加载字典……")
     dt_p = os.path.join(dict_path, sub_path)
     dt = {}
     try:
@@ -245,9 +246,9 @@ def load_img_dict(dict_path: str, sub_path: str):
             key = os.path.splitext(name)[0]
             value = os.path.join(dt_p, name)
             dt[key] = value
-        print(f"{sub_path}装载完成！")
+        logger.info(f"{sub_path}加载完成！")
     except (Exception, RuntimeError) as e:
-        print(f"加载{sub_path}字典时发生错误：{e}")
+        logger.error(f"加载{sub_path}字典时发生错误：{e}")
     return dt
 
 def find_img(dt: dict, ch: str):

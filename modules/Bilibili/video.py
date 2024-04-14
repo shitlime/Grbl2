@@ -2,6 +2,7 @@ import re
 import asyncio
 import aiohttp
 from bilibili_api import video
+from loguru import logger
 
 
 def get_video_id(url: str) -> str | None:
@@ -34,14 +35,14 @@ async def get_real_url(url: str):
         'Connection': 'close'
     }
     timeout = aiohttp.ClientTimeout(total = 30)
-    print(f"Bilibili.get_real_url: 开始访问手机端分享链接 {url}")
+    logger.info(f"Bilibili.get_real_url: 开始访问手机端分享链接 {url}")
     async with aiohttp.ClientSession(headers=headers, timeout=timeout) as session:
         async with session.get(url) as result:
             if result.status == 200:
-                print(f"Bilibili.get_real_url: 获取到原始链接 {result.url}")
+                logger.info(f"Bilibili.get_real_url: 获取到原始链接 {result.url}")
                 return str(result.url)
             else:
-                print(f"Bilibili.get_real_url: 返回结果错误，状态码 {result.status}")
+                logger.error(f"Bilibili.get_real_url: 返回结果错误，状态码 {result.status}")
 
 async def get_video_info(string: str) -> dict | None:
     # 输入信息
@@ -54,10 +55,10 @@ async def get_video_info(string: str) -> dict | None:
         try:
             info = await v.get_info()
             # 打印信息
-            print(str(info)[:1000])
+            logger.info(f"视频信息：{str(info)[:500]}")
             return info
         except:
-            print("获取视频信息出错了")
+            logger.error("获取视频信息失败了")
 
 async def get_video_ai_conclusion(string: str) -> dict:
     # 输入信息
@@ -71,10 +72,10 @@ async def get_video_ai_conclusion(string: str) -> dict:
             cid = list(await v.get_pages())[0]['cid']
             ai_conclusion = await v.get_ai_conclusion(cid)
             # 打印信息
-            print(str(ai_conclusion)[:1000])
+            logger.info(f"AI总结：{str(ai_conclusion)[:500]}")
             return ai_conclusion
         except:
-            print("获取视频AI总结出错了")
+            logger.error("获取视频AI总结失败了")
 
 if __name__ == '__main__':
     string = input("输入视屏链接：")

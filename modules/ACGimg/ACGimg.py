@@ -1,4 +1,5 @@
 import asyncio
+from loguru import logger
 
 from bot_init import BOT
 from modules.base.message_queue import MessageQueue
@@ -60,7 +61,7 @@ fqc_time = config['fqc_time']
 )
 async def acg_img(app: Ariadne, group: Group, member: Member):
     img = await get_acg_img()
-    print("acgimg: 正在返回图片")
+    logger.info("acgimg: 正在返回图片")
     if type(img) == bytes:
         await app.send_message(
             group,

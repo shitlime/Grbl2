@@ -1,3 +1,5 @@
+from loguru import logger
+
 from bot_init import BOT
 from graia.saya import Channel
 from graia.scheduler import timers
@@ -36,4 +38,4 @@ async def send_happy_new_year(app: Ariadne):
                 message= msg
             )
     except:
-        print("定时发送消息错误")
+        logger.error("定时发送消息错误")

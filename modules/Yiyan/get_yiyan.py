@@ -1,5 +1,6 @@
 import aiohttp
 import asyncio
+from loguru import logger
 
 # 获取一言
 
@@ -26,7 +27,7 @@ async def get_yiyan(c: list[str], encode: str, min_length=1, max_length=100):
                 elif encode == 'json':
                     return await r.json()
                 else:
-                    print('指定的返回格式不合法')
+                    logger.error('指定的返回格式不合法')
                     return None
             else:
                 return r.status

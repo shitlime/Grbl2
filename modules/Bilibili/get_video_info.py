@@ -1,4 +1,5 @@
 from .video import get_video_info, get_video
+from loguru import logger
 
 from ..base.get_quote_message import get_quote_message
 from ..base.time2str import timestamp2str
@@ -49,7 +50,7 @@ keyword = ["解析", "bili"]
 )
 async def get_video_info_auto(app: Ariadne, target: Group | Friend, bvid: RegexResult):
     bvid = bvid.result.display
-    print(f"识别到消息中含有BV：{bvid}")
+    logger.info(f"识别到消息中含有BV：{bvid}")
     # 获取视屏信息
     video = get_video(bvid)
     info = await video.get_info()

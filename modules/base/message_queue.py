@@ -2,8 +2,8 @@
 # 2023-06-01 Shitlime： 为了躲避风控，需要收集全局的消息发送，并进行排队延时
 
 import asyncio
-
 import random
+from loguru import logger
 
 from graia.ariadne.app import Ariadne
 
@@ -24,7 +24,7 @@ class MessageQueue:
         return cls.__instance
     
     async def send_message_worker(self):
-        print(f"消息队列开始工作，当前延时{msg_delay}秒")
+        logger.info(f"消息队列开始工作，当前延时{msg_delay}秒")
         while True:
             # 从消息队列中取出待发送的消息
             app, target, message, quote = await self.queue.get()
@@ -39,7 +39,7 @@ class MessageQueue:
                 # 原始内容发送
                 await app.send_message(target, message)
             except Exception as e:
-               print(f"ERROR: {e}")
+               logger.error(f"消息队列发生了异常：{e}")
             await asyncio.sleep(msg_delay)
 
     async def send_message(self, app: Ariadne, target, message, *, quote = False,):

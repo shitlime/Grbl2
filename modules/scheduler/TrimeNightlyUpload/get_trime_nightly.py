@@ -2,6 +2,7 @@ import asyncio
 import aiohttp
 import datetime
 import pytz
+from loguru import logger
 
 from .OutdatedAssetsException import OutdatedAssetsException
 
@@ -38,7 +39,7 @@ async def get_info() -> dict:
     if type(infos) == dict:
         return infos
     else:
-        print(f"获取trime nightly下载链接出错！状态码：{infos}")
+        logger.error(f"获取trime nightly下载链接出错！状态码：{infos}")
 
 async def get_file_bytes(url: str):
     """
@@ -50,18 +51,18 @@ async def get_file_bytes(url: str):
             async with aiohttp.request("GET", url=url) as r:
                 return await r.read()
         except TimeoutError:
-            print(f"下载文件数据超时 第{count}次")
+            logger.info(f"下载文件数据超时 第{count}次")
             await asyncio.sleep(4)
         finally:
             count += 1
 
-async def test():
-    info = await get_info()
-    data = await get_file_bytes(list(info['assets'].items())[0][1])
-    print(data)
-    print(len(data))
-    print(info['body'])
-
 if __name__ == "__main__":
+    async def test():
+        info = await get_info()
+        data = await get_file_bytes(list(info['assets'].items())[0][1])
+        print(data)
+        print(len(data))
+        print(info['body'])
+
     loop = asyncio.get_event_loop()
     loop.run_until_complete(test())

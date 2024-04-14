@@ -2,6 +2,8 @@ from graia.ariadne import Ariadne
 from graia.ariadne.model import Group, Friend
 from graia.ariadne.message.element import Quote
 
+from loguru import logger
+
 async def get_quote_message(message_id: int, target: Group | Friend):
     """
     message_id: 消息的id号
@@ -16,5 +18,5 @@ async def get_quote_message(message_id: int, target: Group | Friend):
             quote_message = await Ariadne.current().get_message_from_id(message=current_message.quote.id, target=target)
             return quote_message
     except:
-        print("get quote_message failed! return current_message's quote.")
+        logger.warning("get quote_message failed! return current_message's quote.")
         return current_message.quote

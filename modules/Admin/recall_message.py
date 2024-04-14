@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from loguru import logger
 
 from bot_init import BOT
 from modules.base.message_queue import MessageQueue
@@ -56,18 +57,18 @@ async def recall_message(app: Ariadne, group: Group, source: Source, num: RegexR
             if msg.sender.id == BOT.ariadne_config["qq_id"]:
                 # 如果消息已经超过2分钟，一般无法撤回
                 if (datetime.now(timezone.utc) - msg.source.time).total_seconds() > 120:
-                    print("Bot最近的消息已经超过2分钟")
+                    logger.info("Bot最近的消息已经超过2分钟")
                     # 如果Bot是群主/管理员，继续撤回
                     if (msg.sender.permission == MemberPerm.Administrator
                         or
                         msg.sender.permission == MemberPerm.Owner):
-                        print(f"使用管理员权限撤回msg={msg}")
+                        logger.info(f"使用管理员权限撤回msg={msg}")
                         await app.recall_message(msg)
                     else:
-                        print("Bot无管理员权限，撤回失败")
+                        logger.info("Bot无管理员权限，撤回失败")
                         await app.send_message(group, MessageChain("消息超过2分钟且无权限撤回"))
                         return
-                print(f"尝试撤回msg{msg}")
+                logger.info(f"尝试撤回msg{msg}")
                 await app.recall_message(msg)
                 num -= 1
             # 撤回后寻找下一条消息

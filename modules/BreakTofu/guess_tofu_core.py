@@ -181,7 +181,7 @@ class GuessTofu():
         for l in rule:
             sum += l.count(1)
         self.maskCount = sum
-        print(self.maskCount)
+        # print(self.maskCount)
         self.maxCount = x*y
         self.score = int((self.maskCount / self.maxCount) * ((self.level + 1) * 10)) + 1
         return rule

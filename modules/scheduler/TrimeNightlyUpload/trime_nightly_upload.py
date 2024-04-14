@@ -1,6 +1,7 @@
 import re
 import datetime
 import asyncio
+from loguru import logger
 
 from bot_init import BOT
 from graia.saya import Channel
@@ -35,7 +36,7 @@ async def upload_trime_nightly(app: Ariadne):
         try:
             all_info = await get_info()
         except OutdatedAssetsException as e:
-            print(f"{e.message} 第{count}次 120s后重新获取")
+            logger.info(f"{e.message} 第{count}次 120s后重新获取")
             await asyncio.sleep(120)
         finally:
             count += 1

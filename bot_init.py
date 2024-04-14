@@ -2,6 +2,8 @@
 import yaml
 import platform
 
+from loguru import logger
+
 class BotData(yaml.YAMLObject):
     yaml_tag = '!BotData'
     yaml_loader = yaml.SafeLoader
@@ -46,8 +48,8 @@ class BotData(yaml.YAMLObject):
             yaml.dump(self, f)
 
     def print_config(self) -> None:
-        print("Bot config:")
-        print(self)
+        logger.info("Bot config:")
+        logger.info(self)
 
     def get_modules_config(self, module_name: str) -> dict:
         return self.modules_config[module_name]

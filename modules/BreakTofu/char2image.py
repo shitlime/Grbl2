@@ -46,7 +46,7 @@ def char2image(string: str, font_size=60, background_color=(255, 255, 255), char
             while True:
                 string_list.append(next(g))
         except StopIteration:
-            print("文字切分完毕")
+            # print("文字切分完毕")
             pass
         string = string_list
     img = Image.new("RGB", (width, height), background_color)

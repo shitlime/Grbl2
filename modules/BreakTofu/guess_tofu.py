@@ -1,6 +1,7 @@
 import re
 import random
 import asyncio
+from loguru import logger
 
 from bot_init import BOT
 from modules.base.message_queue import MessageQueue
@@ -160,7 +161,7 @@ async def guess_tofu(app: Ariadne, target: Group|Friend,
                         )
                     )
                     # 胜利的玩家
-                    print(f" 胜利：{player}")
+                    logger.info(f"猜豆腐-单胜利玩家：{player}")
                     return 0    # 答对0
                 else:
                     msg = await app.send_message(
@@ -349,6 +350,7 @@ async def guess_tofu_competition(app: Ariadne, events: GroupMessage):
                         else:
                             # 空
                             scroes[player.id] = gt.score
+                        logger.info(f"猜豆腐-竞赛胜利玩家：{player}")
                         return 0    # 答对0
                     else:
                         # 答错
@@ -572,6 +574,7 @@ async def guess_tofu_endless(app: Ariadne, target: Group,
                         else:
                             # 空
                             scroes[player.id] = 1
+                        logger.info(f"猜豆腐-无尽胜利玩家：{player}")
                         return 0    # 答对0
                     else:
                         # 答错

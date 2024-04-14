@@ -2,6 +2,8 @@ import base64
 import aiohttp
 import asyncio
 
+from loguru import logger
+
 # TEST
 from pathlib import Path
 
@@ -14,7 +16,7 @@ async def get_img(url: str):
         async with session.get(url) as r:
             if r.status == 200:    # 请求成功
                 img = await r.read()
-                print(f'acgimg size{len(img)}')
+                logger.info(f'acgimg size{len(img)}')
                 return img
             else:    # 请求失败
                 return r.status

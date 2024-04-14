@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from asyncio.events import AbstractEventLoop
+from loguru import logger
 
 from bot_init import BOT
 from modules.base.check import check_friend
@@ -31,7 +32,7 @@ app = Ariadne(
 @app.broadcast.receiver("FriendMessage", decorators=[check_friend(BOT.admin)])
 async def friend_message_listener(app: Ariadne, friend: Friend, message: MessageChain):
     friendMsg = message.display # type:str
-    #print(friend.id) # 打印QQ号码
+    #logger.info(friend.id) # 打印QQ号码
     if friendMsg == "|say h":
         await app.send_message(
             friend,
@@ -79,7 +80,7 @@ with saya.module_context():
         try:
             saya.require(m)
         except (Exception, RuntimeError) as e:
-            print(f"加载[{m}]模块时发生错误：{e}")
+            logger.error(f"加载[{m}]模块时发生错误：{e}")
 
 # 阻塞式启动
 app.launch_blocking()

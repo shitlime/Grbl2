@@ -1,4 +1,5 @@
 import asyncio
+from loguru import logger
 
 from bot_init import BOT
 from modules.base.message_queue import MessageQueue
@@ -45,7 +46,7 @@ async def send_news_img(app: Ariadne):
     calendar_img = await get_calendar_img()
     # 遇到错误将隔30s重试
     while type(news_img) != bytes and i < 16:
-        print(f"请求新闻图片失败，错误码{news_img}，重试{i}…")
+        logger.info(f"请求新闻图片失败，错误码{news_img}，重试{i}…")
         news_img = await get_news_img()
         i += 1
         await asyncio.sleep(30)
@@ -69,7 +70,7 @@ async def send_news_img(app: Ariadne):
                 )
             )
     except:
-        print("定时发送60秒看世界新闻 发送消息时错误")
+        logger.error("定时发送60秒看世界新闻 发送消息时错误")
 
 # 管理员指令：
 @channel.use(

@@ -1,5 +1,6 @@
 import re
 import asyncio
+from loguru import logger
 
 from bot_init import BOT
 from modules.base.message_queue import MessageQueue
@@ -102,7 +103,7 @@ async def break_tofu(app: Ariadne, group: Group, source: Source):
     #print(f"tofu={tofu}")
 
     if tofu not in banText:
-        print(f"豆腐块:{tofu}")
+        logger.info(f"渲染豆腐块:{tofu}")
         await app.send_message(
             group,
             # MessageChain(Image(data_bytes= await get_tofu_img(tofu, fd_cache))),
@@ -139,7 +140,7 @@ async def break_tofu_cmd(app: Ariadne, target: Group|Friend, msg: MessageChain):
         if tofu in banText:
             pass
         else:
-            print(f"豆腐块cmd:{tofu}")
+            logger.info(f"渲染豆腐块:{tofu}")
             await app.send_message(
                 target,
                 MessageChain(
