@@ -48,7 +48,7 @@ keyword = ["解析", "bili"]
         ]
     )
 )
-async def get_video_info_auto(app: Ariadne, target: Group | Friend, bvid: RegexResult):
+async def get_video_info_auto(app: Ariadne, target: Group | Friend, bvid: RegexResult, msg: MessageChain):
     bvid = bvid.result.display
     logger.info(f"识别到消息中含有BV：{bvid}")
     # 获取视屏信息
@@ -69,9 +69,16 @@ async def get_video_info_auto(app: Ariadne, target: Group | Friend, bvid: RegexR
                 Plain(f"点赞：{info.get('stat').get('like')}\n"),
                 Plain(f"投稿：{timestamp2str(info.get('pubdate'))}\n"),
                 Plain(f"简介：{info.get('desc')[:51]}\n"),
-                Plain(f"ID：{info.get('bvid')} av{info.get('aid')}\n")
+                Plain(f"ID： av{info.get('aid')}\n")
             ),
         )
+        if msg.display != info.get('bvid'):
+            await app.send_message(
+                target,
+                MessageChain(
+                    Plain(f"{info.get('bvid')}")
+                )
+            )
 
 
 # 回复式主动获取信息
