@@ -16,7 +16,7 @@ dependencies = [
     "fonttools>=4.45.0",
     "bilibili-api-python>=16.1.1",
 ]
-requires-python = ">=3.10"
+requires-python = "==3.10"
 readme = "README.md"
 license = {text = "MIT"}
 
